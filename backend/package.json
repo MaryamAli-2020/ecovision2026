@@ -10,7 +10,7 @@
     "lint": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@ecovision/shared": "0.1.0",
+    "@ecovision/shared": "file:../shared",
     "@google/generative-ai": "^0.24.1",
     "cors": "^2.8.5",
     "csv-parse": "^5.6.0",

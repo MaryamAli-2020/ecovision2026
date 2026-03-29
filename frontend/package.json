@@ -10,7 +10,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@ecovision/shared": "0.1.0",
+    "@ecovision/shared": "file:../shared",
     "@tanstack/react-query": "^5.69.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.487.0",
