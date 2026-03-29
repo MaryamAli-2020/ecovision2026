@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "dev": "concurrently -n shared,backend,frontend -c cyan,green,magenta \"npm run dev -w shared\" \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "vercel-build": "npm run build -w shared && npm run build -w backend",
     "build": "npm run build -w shared && npm run build -w backend && npm run build -w frontend",
     "lint": "npm run lint -w frontend && npm run lint -w backend"
   },
