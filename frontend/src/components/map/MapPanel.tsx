@@ -236,7 +236,10 @@ export const MapPanel = ({
 
       const showPopup = (event: maplibregl.MapLayerMouseEvent) => {
         const feature = event.features?.[0];
-        const coordinates = feature?.geometry?.type === "Point" ? feature.geometry.coordinates.slice() as [number, number] : [0, 0];
+        const coordinates: [number, number] =
+          feature?.geometry?.type === "Point"
+            ? [feature.geometry.coordinates[0] ?? 0, feature.geometry.coordinates[1] ?? 0]
+            : [0, 0];
 
         if (!feature?.properties) {
           return;

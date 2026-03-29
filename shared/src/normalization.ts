@@ -173,6 +173,16 @@ const buildCitySeries = (records: NormalizedClimateRecord[]): CityClimateSeries[
       Math.abs(Math.min(latest.spi ?? 0, 0)) * 28 +
       Math.max(0, (latest.lst ?? 0) - 39) * 6 +
       Math.max(0, 0.34 - (latest.ndvi ?? 0)) * 120;
+    const latestSpi = latest.spi ?? null;
+    const previousSpi = previous.spi ?? null;
+    const trendDirection =
+      latestSpi !== null && previousSpi !== null
+        ? latestSpi > previousSpi
+          ? "up"
+          : latestSpi < previousSpi
+            ? "down"
+            : "stable"
+        : "stable";
 
     return {
       id: latest.city.toLowerCase().replace(/\s+/g, "-"),
@@ -198,14 +208,7 @@ const buildCitySeries = (records: NormalizedClimateRecord[]): CityClimateSeries[
         currentForecastAccuracy: latest.forecastAccuracy ?? null,
         previousSpi: previous.spi ?? null,
         riskScore,
-        trendDirection:
-          latest.spi !== null && previous.spi !== null
-            ? latest.spi > previous.spi
-              ? "up"
-              : latest.spi < previous.spi
-                ? "down"
-                : "stable"
-            : "stable"
+        trendDirection
       }
     };
   });
