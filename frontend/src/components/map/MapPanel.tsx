@@ -118,7 +118,7 @@ const buildCityFeatureCollection = (
         ndvi: point.ndvi ?? "N/A",
         lst: point.lst ?? "N/A",
         forecast: point.forecast ?? "N/A",
-        riskLevel: city.riskLevel,
+        riskLevel: point.riskLevel,
         intensity
       }
     };
@@ -155,6 +155,8 @@ export const MapPanel = ({
   const selectedCity = getSelectedCity(snapshot, selectedCityId);
   const selectedPoint = getTimelinePoint(selectedCity, timelineIndex);
   const summary = buildForecastSummary(selectedCity, timelineIndex);
+  const criticalSignals = snapshot.cities.filter((city) => getTimelinePoint(city, timelineIndex).riskLevel === "critical").length;
+  const selectedIsCritical = selectedPoint.riskLevel === "critical";
 
   const features = useMemo(
     () => buildCityFeatureCollection(snapshot, timelineIndex, activeMetric),
@@ -214,6 +216,33 @@ export const MapPanel = ({
           "circle-radius": 6.5,
           "circle-stroke-width": 1.5,
           "circle-stroke-color": "#e2e8f0"
+        }
+      });
+
+      map.addLayer({
+        id: "critical-halo",
+        type: "circle",
+        source: "cities",
+        filter: ["==", ["get", "riskLevel"], "critical"],
+        paint: {
+          "circle-color": "#ef4444",
+          "circle-opacity": 0.12,
+          "circle-radius": 28,
+          "circle-stroke-width": 2,
+          "circle-stroke-color": "#fecdd3"
+        }
+      });
+
+      map.addLayer({
+        id: "critical-core",
+        type: "circle",
+        source: "cities",
+        filter: ["==", ["get", "riskLevel"], "critical"],
+        paint: {
+          "circle-color": "#fb7185",
+          "circle-radius": 9,
+          "circle-stroke-width": 2,
+          "circle-stroke-color": "#fff1f2"
         }
       });
 
@@ -353,27 +382,48 @@ export const MapPanel = ({
         <div className="relative min-h-[320px] md:min-h-[390px] lg:min-h-0 lg:flex-1">
           <div ref={containerRef} className="h-[320px] w-full md:h-[390px] lg:h-full" />
 
+          {criticalSignals > 0 ? (
+            <div className="pointer-events-none absolute right-3 top-3 rounded-full border border-rose-400/30 bg-rose-500/15 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-100 shadow-ember">
+              Critical signal live - {criticalSignals} hotspot{criticalSignals > 1 ? "s" : ""}
+            </div>
+          ) : null}
+
           <div className="pointer-events-none absolute left-3 top-3 max-w-[250px] rounded-[18px] border border-white/10 bg-slate-950/88 px-3 py-2.5 backdrop-blur-xl">
-            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200">Intelligence Tip</p>
+            <p className={cn("text-[11px] uppercase tracking-[0.22em] text-cyan-200", selectedIsCritical && "text-rose-200")}>Intelligence Tip</p>
             <p className="mt-1.5 line-clamp-3 text-[13px] leading-5 text-slate-200">
               Focus on {selectedCity.city}: {selectedCity.summaryText}
             </p>
           </div>
 
-          <div className="pointer-events-none absolute bottom-3 left-3 max-w-[280px] rounded-[18px] border border-white/10 bg-slate-950/88 px-3 py-2.5 backdrop-blur-xl">
-            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-200">Forecast Summary</p>
+          <div
+            className={cn(
+              "pointer-events-none absolute bottom-3 left-3 max-w-[280px] rounded-[18px] border border-white/10 bg-slate-950/88 px-3 py-2.5 backdrop-blur-xl",
+              selectedIsCritical && "border-rose-400/30 bg-rose-950/55 shadow-ember"
+            )}
+          >
+            <p className={cn("text-[11px] uppercase tracking-[0.22em] text-cyan-200", selectedIsCritical && "text-rose-200")}>Forecast Summary</p>
             <p className="mt-1.5 font-display text-[15px] text-white">{summary.headline}</p>
             <p className="mt-1 line-clamp-2 text-[13px] leading-5 text-slate-300">{summary.detail}</p>
-            <p className="mt-1.5 text-[10px] uppercase tracking-[0.18em] text-teal-200">{summary.signal}</p>
+            <p className={cn("mt-1.5 text-[10px] uppercase tracking-[0.18em] text-teal-200", selectedIsCritical && "text-rose-200")}>{summary.signal}</p>
           </div>
         </div>
 
         <div className="border-t border-white/8 px-5 py-3">
           <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-center">
-            <div className="rounded-[24px] border border-white/8 bg-white/5 p-4">
+            <div
+              className={cn(
+                "rounded-[24px] border border-white/8 bg-white/5 p-4",
+                selectedIsCritical && "border-rose-400/30 bg-rose-500/8 shadow-ember"
+              )}
+            >
               <p className="text-xs uppercase tracking-[0.22em] text-slate-400">Focused City</p>
               <p className="mt-2 font-display text-2xl text-white">{selectedCity.city}</p>
               <p className="mt-1 text-sm text-slate-400">{selectedCity.region}</p>
+              {selectedIsCritical ? (
+                <span className="mt-3 inline-flex rounded-full border border-rose-400/30 bg-rose-500/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-100">
+                  Red signal active
+                </span>
+              ) : null}
               <div className="mt-3 flex flex-wrap gap-2">
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200">
                   SPI {selectedPoint.spi?.toFixed(1) ?? "N/A"}

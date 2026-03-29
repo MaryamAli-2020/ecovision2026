@@ -5,12 +5,13 @@ import { useEffect } from "react";
 import { AudioBriefingPanel } from "@/components/audio/AudioBriefingPanel";
 import { ClimateAssistantPanel } from "@/components/chat/ClimateAssistantPanel";
 import { ConnectDataModal } from "@/components/data/ConnectDataModal";
+import { DecisionAlertsPanel } from "@/components/dashboard/DecisionAlertsPanel";
 import { ForecastChartPanel } from "@/components/dashboard/ForecastChartPanel";
 import { KpiGrid } from "@/components/dashboard/KpiGrid";
 import { Header } from "@/components/layout/Header";
 import { MapPanel } from "@/components/map/MapPanel";
 import { downloadPdfReport, generateAudioBrief, sendChatMessage } from "@/lib/api";
-import { createUserMessage, getSelectedCity } from "@/lib/dashboard";
+import { countCriticalSignals, createUserMessage, getSelectedCity } from "@/lib/dashboard";
 import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
 import { useDashboard } from "@/providers/DashboardProvider";
 
@@ -53,6 +54,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
   const { isSpeaking, speak, stop } = useSpeechSynthesis();
   const snapshot = dashboard.snapshot as DashboardSnapshot;
   const selectedCity = getSelectedCity(snapshot, selectedCityId);
+  const criticalSignals = countCriticalSignals(snapshot, timelineIndex);
 
   const chatMutation = useMutation({
     mutationFn: sendChatMessage
@@ -138,6 +140,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
       <Header
         mode={snapshot.mode}
         healthReady={!isHealthLoading && Boolean(dashboard.health)}
+        criticalSignals={criticalSignals}
         onOpenConnect={() => setConnectModalOpen(true)}
         onSwitchDemo={handleUseDemo}
         onSwitchLive={() => {
@@ -165,6 +168,8 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
                 {snapshot.warnings[0].message}
               </div>
             ) : null}
+
+            <DecisionAlertsPanel snapshot={snapshot} timelineIndex={timelineIndex} />
 
             <KpiGrid
               snapshot={snapshot}

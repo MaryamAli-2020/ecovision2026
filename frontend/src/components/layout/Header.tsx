@@ -1,16 +1,17 @@
-import { Activity, DatabaseZap, Sparkles, Waves } from "lucide-react";
+import { Activity, DatabaseZap, ShieldAlert, Sparkles, Waves } from "lucide-react";
 
 import { cn, riskBadgeClasses } from "@/lib/utils";
 
 interface HeaderProps {
   mode: "demo" | "live";
   healthReady: boolean;
+  criticalSignals: number;
   onOpenConnect: () => void;
   onSwitchDemo: () => void;
   onSwitchLive: () => void;
 }
 
-export const Header = ({ mode, healthReady, onOpenConnect, onSwitchDemo, onSwitchLive }: HeaderProps) => (
+export const Header = ({ mode, healthReady, criticalSignals, onOpenConnect, onSwitchDemo, onSwitchLive }: HeaderProps) => (
   <header className="sticky top-0 z-30 border-b border-white/8 bg-slate-950/50 backdrop-blur-2xl">
     <div className="mx-auto flex max-w-[1600px] flex-col gap-4 px-5 py-4 lg:px-6">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -37,6 +38,12 @@ export const Header = ({ mode, healthReady, onOpenConnect, onSwitchDemo, onSwitc
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          {criticalSignals > 0 ? (
+            <div className="flex items-center gap-2 rounded-2xl border border-rose-400/25 bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-100 shadow-ember">
+              <ShieldAlert className="h-4 w-4 text-rose-200" />
+              {criticalSignals} critical signal{criticalSignals > 1 ? "s" : ""}
+            </div>
+          ) : null}
           <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-300">
             <Activity className={cn("h-4 w-4", healthReady ? "text-emerald-300" : "text-amber-300")} />
             {healthReady ? "Backend ready" : "Checking services"}
