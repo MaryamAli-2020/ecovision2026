@@ -105,12 +105,13 @@ export const buildKpiCards = (snapshot: DashboardSnapshot, city: CityClimateSeri
   ];
 };
 
-export const buildForecastSeries = (city: CityClimateSeries) =>
-  city.timeSeries.map((point) => ({
+export const buildForecastSeries = (city: CityClimateSeries, timelineIndex: number) =>
+  city.timeSeries.map((point, index) => ({
     label: formatMonth(point.timestamp),
     timestamp: point.timestamp,
-    actual: point.spi,
-    forecast: point.forecast
+    actualObserved: index <= timelineIndex ? point.spi : null,
+    forecastObserved: index <= timelineIndex ? point.forecast : null,
+    futureForecast: index >= timelineIndex ? point.forecast : null
   }));
 
 export const buildForecastSummary = (city: CityClimateSeries, timelineIndex: number) => {
