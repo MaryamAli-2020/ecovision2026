@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+      "@ecovision/shared": resolve(__dirname, "../shared/src/index.ts"),
       "@": resolve(__dirname, "src")
     }
   },

@@ -4,6 +4,9 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
+      "@ecovision/shared": [
+        "../shared/src/index.ts"
+      ],
       "@/*": [
         "src/*"
       ]
