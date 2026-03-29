@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { z } from "zod";
 
-import { asyncHandler } from "../lib/asyncHandler";
-import { generateBriefing, generateChatResponse } from "../services/chatService";
-import { createPdfReport } from "../services/reportService";
+import { asyncHandler } from "../lib/asyncHandler.js";
+import { generateBriefing, generateChatResponse } from "../services/chatService.js";
+import { createPdfReport } from "../services/reportService.js";
 
 const dashboardSnapshotSchema = z.object({
   mode: z.enum(["demo", "live"]),

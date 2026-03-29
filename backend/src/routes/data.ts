@@ -3,13 +3,13 @@ import multer from "multer";
 import { z } from "zod";
 import type { MongoCollectionsRequest, MongoIngestRequest } from "@ecovision/shared";
 
-import { asyncHandler } from "../lib/asyncHandler";
+import { asyncHandler } from "../lib/asyncHandler.js";
 import {
   createUploadResponse,
   ingestMongoDataset,
   listMongoCollections,
   parseFieldMapping
-} from "../services/dataService";
+} from "../services/dataService.js";
 
 const upload = multer({
   storage: multer.memoryStorage(),

@@ -3,7 +3,7 @@ import {
   DEFAULT_TIMELINE,
   DEMO_AUDIO_WAVEFORM,
   SAMPLE_QUESTIONS
-} from "./constants";
+} from "./constants.js";
 import type {
   AudioBrief,
   ChatMessage,
@@ -15,7 +15,7 @@ import type {
   DatasetProfile,
   Language,
   RiskLevel
-} from "./types";
+} from "./types.js";
 
 const buildBrief = (city: string, summary: string, language: Language): string => {
   if (language === "ar") {

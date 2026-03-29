@@ -2,10 +2,10 @@ import "dotenv/config";
 import cors from "cors";
 import express from "express";
 
-import { dashboardRouter } from "./routes/dashboard";
-import { dataRouter } from "./routes/data";
-import { healthRouter } from "./routes/health";
-import { insightsRouter } from "./routes/insights";
+import { dashboardRouter } from "./routes/dashboard.js";
+import { dataRouter } from "./routes/data.js";
+import { healthRouter } from "./routes/health.js";
+import { insightsRouter } from "./routes/insights.js";
 
 export const createApp = () => {
   const app = express();

@@ -1,4 +1,4 @@
-import type { ClimateMetric, ExpectedField, Language, RiskLevel } from "./types";
+import type { ClimateMetric, ExpectedField, Language, RiskLevel } from "./types.js";
 
 export const EXPECTED_FIELDS: ExpectedField[] = [
   "city",

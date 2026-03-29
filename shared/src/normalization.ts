@@ -4,8 +4,8 @@ import {
   FIELD_ALIASES,
   KNOWN_UAE_CITIES,
   SAMPLE_QUESTIONS
-} from "./constants";
-import { createDemoMessages, createDemoSnapshot } from "./demoData";
+} from "./constants.js";
+import { createDemoMessages, createDemoSnapshot } from "./demoData.js";
 import type {
   ChatMessage,
   CityClimateSeries,
@@ -20,7 +20,7 @@ import type {
   NormalizationWarning,
   NormalizedClimateRecord,
   RiskLevel
-} from "./types";
+} from "./types.js";
 
 const normalizeHeader = (value: string): string => value.trim().toLowerCase().replace(/[\s-]+/g, "_");
 
