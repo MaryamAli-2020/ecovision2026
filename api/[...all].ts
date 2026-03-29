@@ -1,5 +1,12 @@
-import { createApp } from "../backend/src/app";
+let appPromise:
+  | Promise<ReturnType<(typeof import("../backend/src/app.js"))["createApp"]>>
+  | undefined;
 
-const app = createApp();
+export default async function handler(request: unknown, response: unknown) {
+  if (!appPromise) {
+    appPromise = import("../backend/src/app.js").then(({ createApp }) => createApp());
+  }
 
-export default app;
+  const app = await appPromise;
+  return app(request, response);
+}
