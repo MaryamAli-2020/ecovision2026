@@ -1,6 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import { z } from "zod";
+import type { MongoCollectionsRequest, MongoIngestRequest } from "@ecovision/shared";
 
 import { asyncHandler } from "../lib/asyncHandler";
 import {
@@ -49,7 +50,12 @@ dataRouter.post(
 dataRouter.post(
   "/mongo/collections",
   asyncHandler(async (request, response) => {
-    const payload = mongoCollectionsSchema.parse(request.body);
+    const parsed = mongoCollectionsSchema.parse(request.body);
+    const payload: MongoCollectionsRequest = {
+      uri: parsed.uri,
+      database: parsed.database
+    };
+
     response.json(await listMongoCollections(payload));
   })
 );
@@ -61,7 +67,14 @@ dataRouter.post(
       ...request.body,
       fieldMapping: parseFieldMapping(request.body.fieldMapping)
     };
-    const payload = mongoIngestSchema.parse(parsedBody);
+    const parsed = mongoIngestSchema.parse(parsedBody);
+    const payload: MongoIngestRequest = {
+      uri: parsed.uri,
+      database: parsed.database,
+      collection: parsed.collection,
+      fieldMapping: parsed.fieldMapping
+    };
+
     response.json(await ingestMongoDataset(payload));
   })
 );
