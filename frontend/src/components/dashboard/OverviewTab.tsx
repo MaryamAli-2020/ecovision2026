@@ -1,11 +1,12 @@
 import type { ClimateMetric, DashboardSnapshot, SeverityFilter } from "@ecovision/shared";
-import { Database, Droplets, Leaf, ThermometerSun } from "lucide-react";
+import { CloudSun, Database, Droplets, Leaf, ShieldAlert, ThermometerSun, Wind } from "lucide-react";
 
+import { EmirateCarousel } from "@/components/dashboard/EmirateCarousel";
 import { KpiGrid } from "@/components/dashboard/KpiGrid";
+import { OverviewSourcesFooter } from "@/components/dashboard/OverviewSourcesFooter";
 import { MapPanel } from "@/components/map/MapPanel";
-import { ExpandablePanel } from "@/components/ui/ExpandablePanel";
-import { buildCurrentConditionRows } from "@/lib/dashboard";
-import { cn, formatPercent } from "@/lib/utils";
+import { calculatePointRiskScore, getTimelinePoint } from "@/lib/dashboard";
+import { formatPercent, riskBadgeClasses } from "@/lib/utils";
 
 interface OverviewTabProps {
   snapshot: DashboardSnapshot;
@@ -18,6 +19,38 @@ interface OverviewTabProps {
   onTimelineChange: (index: number) => void;
 }
 
+const buildWeatherLabel = (lst: number | null | undefined, soilMoisture: number | null | undefined) => {
+  if ((lst ?? 0) >= 43) {
+    return "Extreme heat";
+  }
+
+  if ((lst ?? 0) >= 39 && (soilMoisture ?? 1) < 0.2) {
+    return "Hot and dry";
+  }
+
+  if ((lst ?? 0) >= 37) {
+    return "Warm haze";
+  }
+
+  if ((soilMoisture ?? 0) >= 0.28) {
+    return "Coastal relief";
+  }
+
+  return "Stable conditions";
+};
+
+const buildWeatherNote = (lst: number | null | undefined, soilMoisture: number | null | undefined) => {
+  if ((lst ?? 0) >= 43) {
+    return "Urban heat still dominant";
+  }
+
+  if ((soilMoisture ?? 1) < 0.2) {
+    return "Dry surface profile";
+  }
+
+  return "Balanced surface moisture";
+};
+
 export const OverviewTab = ({
   snapshot,
   activeMetric,
@@ -27,119 +60,114 @@ export const OverviewTab = ({
   onMetricChange,
   onCitySelect,
   onTimelineChange
-}: OverviewTabProps) => {
-  const conditions = buildCurrentConditionRows(snapshot, severityFilter);
+}: OverviewTabProps) => (
+    <div className="flex h-full min-h-0 flex-col gap-4">
+      <div className="grid gap-4 xl:min-h-0 xl:flex-1 xl:grid-cols-[minmax(0,1.58fr)_390px] xl:items-stretch">
+        <MapPanel
+          snapshot={snapshot}
+          activeMetric={activeMetric}
+          selectedCityId={selectedCityId}
+          timelineIndex={timelineIndex}
+          severityFilter={severityFilter}
+          onMetricChange={onMetricChange}
+          onCitySelect={onCitySelect}
+          onTimelineChange={onTimelineChange}
+        />
 
-  return (
-    <div className="grid gap-4 xl:h-full xl:min-h-0 xl:grid-cols-[minmax(0,1.58fr)_390px] xl:items-stretch">
-      <MapPanel
-        snapshot={snapshot}
-        activeMetric={activeMetric}
-        selectedCityId={selectedCityId}
-        timelineIndex={timelineIndex}
-        severityFilter={severityFilter}
-        onMetricChange={onMetricChange}
-        onCitySelect={onCitySelect}
-        onTimelineChange={onTimelineChange}
-      />
+        <aside className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[auto_minmax(0,1fr)] xl:overflow-hidden xl:pr-1">
+          <KpiGrid snapshot={snapshot} selectedCityId={selectedCityId} timelineIndex={timelineIndex} />
 
-      <aside className="space-y-4 xl:flex xl:h-full xl:min-h-0 xl:flex-col xl:overflow-hidden xl:pr-1">
-        <KpiGrid snapshot={snapshot} selectedCityId={selectedCityId} timelineIndex={timelineIndex} />
+          <EmirateCarousel
+            title="Current Conditions by Emirate"
+            items={snapshot.cities}
+            activeId={selectedCityId}
+            onSelect={onCitySelect}
+            slideClassName="h-full"
+            renderSlide={(city) => {
+              const point = getTimelinePoint(city, timelineIndex);
+              const weatherLabel = buildWeatherLabel(point.lst, point.soilMoisture);
+              const weatherNote = buildWeatherNote(point.lst, point.soilMoisture);
 
-        <ExpandablePanel
-          title="Current Conditions by Emirate"
-          summary={`${conditions.length} emirates`}
-          contentClassName="space-y-3 xl:max-h-[320px] xl:overflow-y-auto xl:pr-1"
-        >
-          {conditions.map((entry) => (
-            <button
-              key={entry.emirateId}
-              onClick={() => onCitySelect(entry.emirateId)}
-              className={cn(
-                "w-full rounded-[20px] border p-3.5 text-left transition",
-                entry.emirateId === selectedCityId
-                  ? "border-cyan-400/30 bg-cyan-400/10"
-                  : "border-white/8 bg-white/5 hover:border-white/15"
-              )}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-display text-lg text-white">{entry.emirate}</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">
-                    {entry.riskLevel} drought severity
-                  </p>
-                </div>
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-slate-200">
-                  {formatPercent(entry.forecastConfidence)}
-                </span>
-              </div>
+              return (
+                <article className="flex h-full flex-col rounded-[24px] border border-white/8 bg-white/5 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-display text-2xl text-white">{city.emirate}</p>
+                      <p className="mt-1 text-sm text-slate-400">{city.region}</p>
+                    </div>
+                    <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ring-1 ${riskBadgeClasses[point.riskLevel]}`}>
+                      {point.riskLevel}
+                    </span>
+                  </div>
 
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2 text-sm text-slate-200">
-                  <span className="inline-flex items-center gap-2 text-slate-400">
-                    <Database className="h-3.5 w-3.5" />
-                    SPI
-                  </span>
-                  <p className="mt-1 text-base text-white">{entry.spi?.toFixed(1) ?? "N/A"}</p>
-                </div>
-                <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2 text-sm text-slate-200">
-                  <span className="inline-flex items-center gap-2 text-slate-400">
-                    <Leaf className="h-3.5 w-3.5" />
-                    NDVI
-                  </span>
-                  <p className="mt-1 text-base text-white">{entry.ndvi?.toFixed(2) ?? "N/A"}</p>
-                </div>
-                <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2 text-sm text-slate-200">
-                  <span className="inline-flex items-center gap-2 text-slate-400">
-                    <ThermometerSun className="h-3.5 w-3.5" />
-                    LST
-                  </span>
-                  <p className="mt-1 text-base text-white">{entry.lst?.toFixed(1) ?? "N/A"} C</p>
-                </div>
-                <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2 text-sm text-slate-200">
-                  <span className="inline-flex items-center gap-2 text-slate-400">
-                    <Droplets className="h-3.5 w-3.5" />
-                    Soil
-                  </span>
-                  <p className="mt-1 text-base text-white">{entry.soilMoisture?.toFixed(2) ?? "N/A"}</p>
-                </div>
-              </div>
-            </button>
-          ))}
-        </ExpandablePanel>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-[20px] border border-white/8 bg-slate-950/45 p-3">
+                      <div className="flex items-center gap-2 text-slate-400">
+                        <CloudSun className="h-4 w-4" />
+                        <span className="text-[11px] uppercase tracking-[0.18em]">Weather</span>
+                      </div>
+                      <p className="mt-2 font-display text-lg text-white">{weatherLabel}</p>
+                      <p className="mt-1 text-sm text-slate-300">{weatherNote}</p>
+                    </div>
 
-        <ExpandablePanel
-          title="Remote Sensing Sources"
-          summary={`${snapshot.analytics.dataSources.length} feeds`}
-          contentClassName="space-y-3 xl:max-h-[280px] xl:overflow-y-auto xl:pr-1"
-        >
-          {snapshot.analytics.dataSources.map((source) => (
-            <article key={source.id} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-display text-base text-white">{source.title}</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">{source.geeId}</p>
-                </div>
-                <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-cyan-100">
-                  {source.status}
-                </span>
-              </div>
-              <p className="mt-2.5 text-sm leading-6 text-slate-300">{source.summary}</p>
-              <div className="mt-2.5 flex flex-wrap gap-2">
-                <span className="rounded-full border border-white/10 bg-slate-950/45 px-3 py-1 text-[11px] text-slate-300">
-                  {source.cadence}
-                </span>
-                <span className="rounded-full border border-white/10 bg-slate-950/45 px-3 py-1 text-[11px] text-slate-300">
-                  Native {source.nativeResolution}
-                </span>
-                <span className="rounded-full border border-white/10 bg-slate-950/45 px-3 py-1 text-[11px] text-slate-300">
-                  Harmonized {source.harmonizedResolution}
-                </span>
-              </div>
-            </article>
-          ))}
-        </ExpandablePanel>
-      </aside>
+                    <div className="rounded-[20px] border border-white/8 bg-slate-950/45 p-3">
+                      <div className="flex items-center gap-2 text-slate-400">
+                        <ShieldAlert className="h-4 w-4" />
+                        <span className="text-[11px] uppercase tracking-[0.18em]">Drought</span>
+                      </div>
+                      <p className="mt-2 font-display text-lg text-white">SPI {point.spi?.toFixed(1) ?? "N/A"}</p>
+                      <p className="mt-1 text-sm text-slate-300">
+                        Confidence {formatPercent(point.forecastAccuracy)}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                      <span className="inline-flex items-center gap-2 text-slate-400">
+                        <Database className="h-3.5 w-3.5" />
+                        Risk score
+                      </span>
+                      <p className="mt-1 text-base text-white">{Math.round(calculatePointRiskScore(point))}</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                      <span className="inline-flex items-center gap-2 text-slate-400">
+                        <Wind className="h-3.5 w-3.5" />
+                        Rainfall deficit
+                      </span>
+                      <p className="mt-1 text-base text-white">{point.rainfallDeficit?.toFixed(0) ?? "N/A"} mm</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                      <span className="inline-flex items-center gap-2 text-slate-400">
+                        <Leaf className="h-3.5 w-3.5" />
+                        NDVI
+                      </span>
+                      <p className="mt-1 text-base text-white">{point.ndvi?.toFixed(2) ?? "N/A"}</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                      <span className="inline-flex items-center gap-2 text-slate-400">
+                        <ThermometerSun className="h-3.5 w-3.5" />
+                        LST
+                      </span>
+                      <p className="mt-1 text-base text-white">{point.lst?.toFixed(1) ?? "N/A"} C</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200 sm:col-span-2">
+                      <span className="inline-flex items-center gap-2 text-slate-400">
+                        <Droplets className="h-3.5 w-3.5" />
+                        Soil moisture
+                      </span>
+                      <p className="mt-1 text-base text-white">{point.soilMoisture?.toFixed(2) ?? "N/A"}</p>
+                    </div>
+                  </div>
+
+                  <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">{city.summaryText}</p>
+                </article>
+              );
+            }}
+          />
+        </aside>
+      </div>
+
+      <OverviewSourcesFooter snapshot={snapshot} />
     </div>
-  );
-};
+);

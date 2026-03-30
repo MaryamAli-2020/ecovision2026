@@ -1,6 +1,7 @@
 import type {
   ChatMessage,
   CityClimateSeries,
+  ClimatePoint,
   ClimateMetric,
   DashboardSnapshot,
   DateRangeKey,
@@ -50,6 +51,12 @@ export const getSelectedCity = (snapshot: DashboardSnapshot, cityId: string) =>
 export const getTimelinePoint = (city: CityClimateSeries, timelineIndex: number) =>
   city.timeSeries[Math.min(Math.max(timelineIndex, 0), city.timeSeries.length - 1)] ??
   city.timeSeries[city.timeSeries.length - 1];
+
+export const calculatePointRiskScore = (point: Pick<ClimatePoint, "spi" | "lst" | "ndvi" | "soilMoisture">) =>
+  Math.abs(Math.min(point.spi ?? 0, 0)) * 28 +
+  Math.max(0, (point.lst ?? 0) - 39) * 5 +
+  Math.max(0, 0.34 - (point.ndvi ?? 0)) * 120 +
+  Math.max(0, 0.24 - (point.soilMoisture ?? 0)) * 180;
 
 const average = (values: Array<number | null | undefined>) => {
   const filtered = values.filter((value): value is number => value !== null && value !== undefined);

@@ -35,6 +35,12 @@ interface ForecastingAnalyticsTabProps {
 }
 
 const chartColors = ["#22d3ee", "#fb7185", "#34d399", "#f59e0b"];
+const modelContributionData: Array<{ feature: string; value: number; color: string }> = [
+  { feature: "Soil Moisture", value: 35, color: "#22d3ee" },
+  { feature: "NDVI", value: 25, color: "#34d399" },
+  { feature: "LST", value: 22, color: "#f59e0b" },
+  { feature: "Seasonality", value: 18, color: "#818cf8" }
+];
 
 const SeasonalMatrix = ({
   values
@@ -80,17 +86,17 @@ const SpatialForecastHeatmap = ({
   });
 
   const layout = [
-    { id: "ras-al-khaimah", left: "55%", top: "5%" },
-    { id: "umm-al-quwain", left: "46%", top: "22%" },
-    { id: "ajman", left: "39%", top: "29%" },
-    { id: "sharjah", left: "49%", top: "34%" },
-    { id: "dubai", left: "32%", top: "42%" },
-    { id: "abu-dhabi", left: "11%", top: "56%" },
-    { id: "fujairah", left: "66%", top: "43%" }
+    { id: "ras-al-khaimah", left: "56%", top: "7%" },
+    { id: "umm-al-quwain", left: "47%", top: "24%" },
+    { id: "ajman", left: "39%", top: "31%" },
+    { id: "sharjah", left: "49%", top: "38%" },
+    { id: "dubai", left: "31%", top: "46%" },
+    { id: "abu-dhabi", left: "10%", top: "62%" },
+    { id: "fujairah", left: "67%", top: "48%" }
   ];
 
   return (
-    <div className="relative min-h-[280px] overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(2,6,23,0.85))]">
+    <div className="relative min-h-[400px] overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(2,6,23,0.85))]">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:48px_48px]" />
       {layout.map((position) => {
         const cell = visibleCells.find((entry) => entry.emirateId === position.id);
@@ -111,7 +117,7 @@ const SpatialForecastHeatmap = ({
         return (
           <div
             key={cell.id}
-            className={cn("absolute w-[148px] rounded-[18px] border p-3 shadow-glow backdrop-blur-xl", tone)}
+            className={cn("absolute w-[156px] rounded-[18px] border p-3 shadow-glow backdrop-blur-xl", tone)}
             style={{ left: position.left, top: position.top }}
           >
             <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{cell.label}</p>
@@ -163,56 +169,51 @@ export const ForecastingAnalyticsTab = ({
           />
         </div>
 
-        <ExpandablePanel
-          className="xl:col-span-4 xl:self-start"
-          title="Model Insights"
-          summary={`${selectedCity.featureInfluence.length} drivers`}
-          badge={<BrainCircuit className="h-4 w-4 text-cyan-200" />}
-          contentClassName="space-y-4 xl:max-h-[520px] xl:overflow-y-auto xl:pr-1"
+        <GlassPanel
+          className="xl:col-span-4"
+          title="Model Insight"
+          subtitle="Static MSTT feature contribution weights"
+          rightSlot={<BrainCircuit className="h-4 w-4 text-cyan-200" />}
         >
-          <div className="space-y-2.5">
-            {selectedCity.featureInfluence.map((entry) => (
-              <div key={entry.feature}>
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm text-white">{entry.feature}</p>
-                  <p className="text-xs text-slate-400">{Math.round(entry.weight * 100)}%</p>
-                </div>
-                <div className="mt-2 h-2 rounded-full bg-white/8">
-                  <div className="h-2 rounded-full bg-gradient-to-r from-cyan-300 to-blue-500" style={{ width: `${entry.weight * 100}%` }} />
-                </div>
-                <p className="mt-1.5 text-xs leading-5 text-slate-400">{entry.narrative}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Architecture</p>
-              <p className="mt-2 text-sm text-slate-200">
-                {snapshot.analytics.model.transformerLayers} layers / {snapshot.analytics.model.attentionHeads} heads / {snapshot.analytics.model.embeddingDimension}d embedding
-              </p>
-            </div>
-            <div className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Optimization</p>
-              <p className="mt-2 text-sm text-slate-200">
-                Adam, LR {snapshot.analytics.model.learningRate}, dropout {snapshot.analytics.model.dropoutRate}, batch {snapshot.analytics.model.batchSize}
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-3">
-            {snapshot.analytics.model.pipeline.map((stage) => (
-              <div key={stage.title} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
-                <p className="font-semibold text-white">{stage.title}</p>
-                <div className="mt-1.5 space-y-1 text-sm text-slate-300">
-                  {stage.details.map((detail) => (
-                    <p key={detail}>{detail}</p>
+          <div className="h-[250px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={modelContributionData}
+                layout="vertical"
+                margin={{ top: 6, right: 18, left: 12, bottom: 6 }}
+              >
+                <CartesianGrid stroke="rgba(148,163,184,0.12)" horizontal={false} />
+                <XAxis type="number" hide domain={[0, 40]} />
+                <YAxis
+                  type="category"
+                  dataKey="feature"
+                  width={90}
+                  tick={{ fill: "#cbd5e1", fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  formatter={(value) => [`${value}%`, "Contribution"]}
+                  contentStyle={{
+                    background: "rgba(15,23,42,0.96)",
+                    border: "1px solid rgba(148,163,184,0.18)",
+                    borderRadius: 18,
+                    color: "#e2e8f0"
+                  }}
+                />
+                <Bar
+                  dataKey="value"
+                  radius={[10, 10, 10, 10]}
+                  label={{ position: "right", fill: "#e2e8f0", formatter: (value: number) => `${value}%` }}
+                >
+                  {modelContributionData.map((entry) => (
+                    <Cell key={entry.feature} fill={entry.color} />
                   ))}
-                </div>
-              </div>
-            ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-        </ExpandablePanel>
+        </GlassPanel>
       </div>
 
       <ExpandablePanel
@@ -225,9 +226,9 @@ export const ForecastingAnalyticsTab = ({
             title="Driver Forecast Signals"
             rightSlot={<Waves className="h-4 w-4 text-cyan-200" />}
           >
-            <div className="h-[210px]">
+            <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={drivers} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
+                <LineChart data={drivers} margin={{ top: 6, right: 0, left: -18, bottom: 0 }}>
                   <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
                   <XAxis dataKey="label" tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
                   <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
@@ -251,9 +252,9 @@ export const ForecastingAnalyticsTab = ({
             title={`Monthly SPI Archive - ${selectedCity.emirate}`}
             rightSlot={<Activity className="h-4 w-4 text-cyan-200" />}
           >
-            <div className="h-[210px]">
+            <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={trendData} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
+                <LineChart data={trendData} margin={{ top: 6, right: 0, left: -18, bottom: 0 }}>
                   <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
                   <XAxis
                     dataKey="timestamp"
@@ -303,7 +304,7 @@ export const ForecastingAnalyticsTab = ({
 
           <div className="space-y-4">
             <GlassPanel title="Compare Models">
-              <div className="h-[180px]">
+              <div className="h-[240px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={modelComparison} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
                     <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
@@ -325,17 +326,6 @@ export const ForecastingAnalyticsTab = ({
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="mt-3 space-y-2.5">
-                {modelComparison.map((entry) => (
-                  <div key={entry.model} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="font-display text-base text-white">{entry.model}</p>
-                      <span className="text-xs text-slate-400">R2 {entry.r2.toFixed(2)}</span>
-                    </div>
-                    <p className="mt-1.5 text-sm text-slate-300">{entry.note}</p>
-                  </div>
-                ))}
-              </div>
             </GlassPanel>
 
             <GlassPanel title="Regional Performance">
@@ -351,7 +341,6 @@ export const ForecastingAnalyticsTab = ({
                       <p>MAE {entry.mae.toFixed(2)}</p>
                       <p>R2 {entry.r2.toFixed(2)}</p>
                     </div>
-                    <p className="mt-1.5 text-xs leading-5 text-slate-400">{entry.note}</p>
                   </div>
                 ))}
               </div>
