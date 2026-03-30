@@ -31,10 +31,7 @@ export const ForecastChartPanel = ({
   const horizonLabel = data[data.length - 1]?.label;
 
   return (
-    <GlassPanel
-      title={`SPI Forecast - ${city.emirate} (MSTT)`}
-      subtitle="Observed SPI, model fit, future forecast, and confidence envelope"
-    >
+    <GlassPanel title={`SPI Forecast - ${city.emirate} (MSTT)`}>
       <div className="mb-3 flex flex-wrap gap-2">
         <span className="rounded-full border border-rose-400/20 bg-rose-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-100">
           Actual observed

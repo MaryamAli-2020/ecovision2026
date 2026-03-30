@@ -20,7 +20,7 @@ export const Header = ({
   onSwitchLive
 }: HeaderProps) => (
   <header className="sticky top-0 z-30 border-b border-white/8 bg-slate-950/60 backdrop-blur-2xl">
-    <div className="mx-auto flex max-w-[1600px] flex-col gap-3 px-4 py-3 lg:flex-row lg:items-center lg:justify-between lg:px-6">
+    <div className="mx-auto flex max-w-[1600px] flex-col gap-2.5 px-4 py-3 lg:flex-row lg:items-center lg:justify-between lg:px-6">
       <div className="flex min-w-0 items-center gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 shadow-glow">
           <Waves className="h-5 w-5 text-slate-950" />
@@ -37,9 +37,6 @@ export const Header = ({
               {mode === "live" ? "Live Data" : "Demo Mode"}
             </span>
           </div>
-          <p className="mt-0.5 truncate text-sm text-slate-400">
-            Multimodal AI climate intelligence for autonomous resilience decisions
-          </p>
         </div>
       </div>
 

@@ -8,30 +8,26 @@ interface DashboardTabsProps {
   onChange: (tab: DashboardTab) => void;
 }
 
-const tabs: Array<{ id: DashboardTab; label: string; icon: typeof LayoutGrid; description: string }> = [
+const tabs: Array<{ id: DashboardTab; label: string; icon: typeof LayoutGrid }> = [
   {
     id: "overview",
     label: "Overview",
-    icon: LayoutGrid,
-    description: "Operations map, KPIs, current conditions, and remote data availability."
+    icon: LayoutGrid
   },
   {
     id: "forecasting",
     label: "Forecasting & Analytics",
-    icon: ChartSpline,
-    description: "MSTT forecasting control center, model comparison, and archive analytics."
+    icon: ChartSpline
   },
   {
     id: "ai-tools",
     label: "AI Tools",
-    icon: Bot,
-    description: "Assistant, audio briefing, summaries, and explainable forecast context."
+    icon: Bot
   },
   {
     id: "alerts",
     label: "Alerts & Decision Support",
-    icon: BellRing,
-    description: "Operational alerts, warning prioritization, and decision-maker messaging."
+    icon: BellRing
   }
 ];
 
@@ -45,7 +41,7 @@ export const DashboardTabs = ({ activeTab, onChange }: DashboardTabsProps) => (
           key={tab.id}
           onClick={() => onChange(tab.id)}
           className={cn(
-            "rounded-[22px] border p-3.5 text-left transition",
+            "rounded-[22px] border p-3 text-left transition",
             activeTab === tab.id
               ? "border-cyan-400/30 bg-cyan-400/10 shadow-glow"
               : "border-white/8 bg-white/5 hover:border-white/15"
@@ -60,10 +56,7 @@ export const DashboardTabs = ({ activeTab, onChange }: DashboardTabsProps) => (
             >
               <Icon className="h-4 w-4" />
             </div>
-            <div>
-              <p className="font-display text-sm text-white">{tab.label}</p>
-              <p className="mt-1 text-[11px] leading-5 text-slate-400">{tab.description}</p>
-            </div>
+            <p className="font-display text-sm text-white">{tab.label}</p>
           </div>
         </button>
       );

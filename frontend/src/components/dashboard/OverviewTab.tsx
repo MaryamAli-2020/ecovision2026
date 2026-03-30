@@ -48,7 +48,6 @@ export const OverviewTab = ({
 
         <GlassPanel
           title="Current Conditions by Emirate"
-          subtitle="Current SPI, NDVI, LST, soil moisture, and forecast confidence for the synchronized timeline."
           contentClassName="space-y-3"
         >
           {conditions.map((entry) => (
@@ -110,7 +109,6 @@ export const OverviewTab = ({
 
         <GlassPanel
           title="Remote Sensing Sources"
-          subtitle="Live-ready data connectors and harmonization steps planned for production ingestion."
           contentClassName="space-y-3"
         >
           {snapshot.analytics.dataSources.map((source) => (

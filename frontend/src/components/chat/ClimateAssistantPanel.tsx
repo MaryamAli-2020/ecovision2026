@@ -41,11 +41,7 @@ export const ClimateAssistantPanel = ({
 
   return (
     <>
-      <GlassPanel
-        title="AI Climate Assistant"
-        subtitle="Grounded in the active dashboard dataset and city selection"
-        rightSlot={<MessageSquareText className="h-4 w-4 text-cyan-200" />}
-      >
+      <GlassPanel title="AI Climate Assistant" rightSlot={<MessageSquareText className="h-4 w-4 text-cyan-200" />}>
         <div className="space-y-4">
           <div className="flex flex-wrap gap-2">
             {(["en", "ar"] as Language[]).map((entry) => (
@@ -149,10 +145,7 @@ export const ClimateAssistantPanel = ({
             className="w-full resize-none rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-400/35"
             placeholder={language === "ar" ? "اكتب سؤالك المناخي..." : "Ask about risk, policy, simulation, or city status..."}
           />
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs text-slate-500">
-              Assistant stays grounded in the currently selected city, timeline, and climate layer.
-            </p>
+          <div className="flex items-center justify-end gap-3">
             <button
               className="inline-flex items-center gap-2 rounded-2xl bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
               onClick={submitQuestion}

@@ -21,11 +21,7 @@ export const AudioBriefingPanel = ({
   onPlay,
   onStop
 }: AudioBriefingPanelProps) => (
-  <GlassPanel
-    title="Audio Briefing Engine"
-    subtitle="Generated policy summary with simulated voice playback"
-    rightSlot={<Volume2 className="h-4 w-4 text-cyan-200" />}
-  >
+  <GlassPanel title="Audio Briefing Engine" rightSlot={<Volume2 className="h-4 w-4 text-cyan-200" />}>
     <div className="space-y-4">
       <div className="rounded-[22px] border border-white/8 bg-slate-900/60 p-4">
         <div className="flex items-center justify-between gap-4">

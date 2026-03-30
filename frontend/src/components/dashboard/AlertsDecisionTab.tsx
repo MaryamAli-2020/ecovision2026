@@ -31,7 +31,6 @@ export const AlertsDecisionTab = ({
       <div className="space-y-4 xl:max-h-[calc(100vh-320px)] xl:overflow-y-auto xl:pr-1">
         <GlassPanel
           title="Risk Scoring by Emirate"
-          subtitle="Forecast-based warning system showing severity, forecast confidence, and rainfall deficit."
           rightSlot={
             <div className="inline-flex items-center gap-2 rounded-full border border-rose-400/20 bg-rose-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-rose-100">
               <Siren className="h-3.5 w-3.5" />
@@ -69,11 +68,7 @@ export const AlertsDecisionTab = ({
           ))}
         </GlassPanel>
 
-        <GlassPanel
-          title="Decision Support Playbook"
-          subtitle="Suggested communication channels and escalation logic for operational stakeholders."
-          contentClassName="space-y-3"
-        >
+        <GlassPanel title="Decision Support Playbook" contentClassName="space-y-3">
           {[
             {
               title: "Immediate red signal",

@@ -7,8 +7,6 @@ import type {
 import type { ReactNode } from "react";
 import { Filter, Globe2, MapPinned, ThermometerSun } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-
 interface GlobalFiltersBarProps {
   snapshot: DashboardSnapshot;
   activeMetric: ClimateMetric;
@@ -49,7 +47,7 @@ const CompactSelect = ({
   onChange: (value: string) => void;
   children: React.ReactNode;
 }) => (
-  <label className="flex min-w-[180px] flex-1 items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 lg:min-w-[190px]">
+  <label className="flex min-w-[165px] flex-1 items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 lg:min-w-[180px]">
     <span className="shrink-0 text-slate-500">{icon}</span>
     <div className="min-w-0 flex-1">
       <span className="block text-[10px] uppercase tracking-[0.22em] text-slate-500">{label}</span>
@@ -75,31 +73,8 @@ export const GlobalFiltersBar = ({
   onDateRangeChange,
   onSeverityChange
 }: GlobalFiltersBarProps) => (
-  <section className="rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-3 shadow-glow backdrop-blur-xl">
-    <div className="flex flex-wrap items-center gap-2">
-      <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-200">
-        <Filter className="h-3.5 w-3.5 text-cyan-200" />
-        Filters
-      </div>
-
-      <div className="hidden flex-wrap items-center gap-2 xl:flex xl:ml-auto">
-        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
-          {snapshot.profile.harmonizedResolution}
-        </span>
-        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
-          {snapshot.profile.temporalScale}
-        </span>
-        <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-[11px] text-cyan-100">
-          {snapshot.analytics.model.name}
-        </span>
-        <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-cyan-100">
-          <Globe2 className="h-3.5 w-3.5" />
-          {snapshot.analytics.dataSources.length} sources
-        </span>
-      </div>
-    </div>
-
-    <div className="mt-3 flex flex-wrap gap-3">
+  <section className="rounded-[22px] border border-white/10 bg-slate-950/60 px-3 py-3 shadow-glow backdrop-blur-xl">
+    <div className="flex flex-wrap gap-2.5 xl:flex-nowrap xl:items-center">
       <CompactSelect
         icon={<MapPinned className="h-4 w-4" />}
         label="Emirate"
@@ -151,18 +126,16 @@ export const GlobalFiltersBar = ({
           </option>
         ))}
       </CompactSelect>
-    </div>
 
-    <div className="mt-3 flex flex-wrap items-center gap-2 xl:hidden">
-      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
-        {snapshot.profile.harmonizedResolution}
-      </span>
-      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
-        {snapshot.profile.temporalScale}
-      </span>
-      <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-[11px] text-cyan-100">
-        MSTT
-      </span>
+      <div className="flex flex-wrap items-center gap-2 xl:ml-auto xl:shrink-0">
+        <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-[11px] text-cyan-100">
+          {snapshot.analytics.model.name}
+        </span>
+        <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
+          <Globe2 className="h-3.5 w-3.5 text-cyan-200" />
+          {snapshot.analytics.dataSources.length} sources
+        </span>
+      </div>
     </div>
   </section>
 );

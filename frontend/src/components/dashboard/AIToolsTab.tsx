@@ -61,7 +61,6 @@ export const AIToolsTab = ({
         <div className="grid gap-4 xl:grid-cols-1">
           <GlassPanel
             title="AI-Generated Climate Summary"
-            subtitle="Simple-language explanation layer for non-technical decision makers."
             rightSlot={<FileText className="h-4 w-4 text-cyan-200" />}
             contentClassName="space-y-3"
           >
@@ -84,7 +83,6 @@ export const AIToolsTab = ({
 
           <GlassPanel
             title="Model Explainer"
-            subtitle="How the AI assistant should explain forecasts, indicators, and model outputs."
             rightSlot={<Lightbulb className="h-4 w-4 text-cyan-200" />}
             contentClassName="grid gap-3"
           >

@@ -165,7 +165,6 @@ export const ForecastingAnalyticsTab = ({
         <GlassPanel
           className="xl:col-span-5"
           title="Model Insights"
-          subtitle="Feature influence, compact architecture notes, and interpretability for the active Emirate."
           rightSlot={<BrainCircuit className="h-4 w-4 text-cyan-200" />}
           contentClassName="space-y-4"
         >
@@ -217,7 +216,6 @@ export const ForecastingAnalyticsTab = ({
       <div className="grid gap-4 xl:grid-cols-3">
         <GlassPanel
           title="Driver Forecast Signals"
-          subtitle="Projected NDVI, LST, and soil moisture in the active outlook."
           rightSlot={<Waves className="h-4 w-4 text-cyan-200" />}
         >
           <div className="h-[210px]">
@@ -244,7 +242,6 @@ export const ForecastingAnalyticsTab = ({
 
         <GlassPanel
           title={`Monthly SPI Archive - ${selectedCity.emirate}`}
-          subtitle="Historical monthly SPI patterns with predicted SPI overlay."
           rightSlot={<Activity className="h-4 w-4 text-cyan-200" />}
         >
           <div className="h-[210px]">
@@ -278,10 +275,7 @@ export const ForecastingAnalyticsTab = ({
           </div>
         </GlassPanel>
 
-        <GlassPanel
-          title="Seasonal Pattern Matrix"
-          subtitle="Monthly signature for SPI, NDVI, LST, and soil moisture over the selected date range."
-        >
+        <GlassPanel title="Seasonal Pattern Matrix">
           <SeasonalMatrix values={seasonalData} />
         </GlassPanel>
       </div>
@@ -289,17 +283,13 @@ export const ForecastingAnalyticsTab = ({
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_360px]">
         <GlassPanel
           title="Forecasted Drought Severity Map"
-          subtitle="Predicted SPI, drought severity, confidence, RMSE, and R2 across the seven Emirates."
           rightSlot={<BarChart3 className="h-4 w-4 text-cyan-200" />}
         >
           <SpatialForecastHeatmap snapshot={snapshot} severityFilter={severityFilter} />
         </GlassPanel>
 
         <div className="space-y-4">
-          <GlassPanel
-            title="Compare Models"
-            subtitle="MSTT performance against LSTM and GRU baselines."
-          >
+          <GlassPanel title="Compare Models">
             <div className="h-[180px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={modelComparison} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
@@ -335,10 +325,7 @@ export const ForecastingAnalyticsTab = ({
             </div>
           </GlassPanel>
 
-          <GlassPanel
-            title="Regional Performance"
-            subtitle="Per-Emirate RMSE, R2, and forecast confidence for comparison."
-          >
+          <GlassPanel title="Regional Performance">
             <div className="space-y-2.5 xl:max-h-[360px] xl:overflow-y-auto xl:pr-1">
               {regionalPerformance.map((entry) => (
                 <div key={entry.emirateId} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">

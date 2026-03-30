@@ -80,7 +80,6 @@ export const DecisionAlertsPanel = ({
   return (
     <GlassPanel
       title="Decision Alerts"
-      subtitle="Forecast-based warning workflows, red signals, and recommended outreach paths for decision makers."
       rightSlot={
         <div
           className={cn(
