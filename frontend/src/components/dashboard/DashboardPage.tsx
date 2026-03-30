@@ -142,7 +142,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
     };
 
   return (
-    <div className="min-h-screen bg-[#07111f] text-white">
+    <div className="min-h-screen bg-[#07111f] text-white lg:flex lg:h-screen lg:flex-col lg:overflow-hidden">
       <Header
         mode={snapshot.mode}
         healthReady={!isHealthLoading && Boolean(dashboard.health)}
@@ -158,7 +158,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
         }}
       />
 
-      <main className="mx-auto max-w-[1600px] space-y-6 px-5 py-6 lg:px-6">
+      <main className="mx-auto max-w-[1600px] space-y-4 px-4 py-4 lg:flex lg:min-h-0 lg:w-full lg:flex-1 lg:flex-col lg:overflow-hidden lg:px-6">
         <GlobalFiltersBar
           snapshot={snapshot}
           activeMetric={activeMetric}
@@ -179,70 +179,72 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
           </div>
         ) : null}
 
-        {activeTab === "overview" ? (
-          <OverviewTab
-            snapshot={snapshot}
-            activeMetric={activeMetric}
-            selectedCityId={selectedCityId}
-            timelineIndex={timelineIndex}
-            severityFilter={severityFilter}
-            onMetricChange={setMetric}
-            onCitySelect={setSelectedCity}
-            onTimelineChange={setTimelineIndex}
-          />
-        ) : null}
+        <div className="lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-1">
+          {activeTab === "overview" ? (
+            <OverviewTab
+              snapshot={snapshot}
+              activeMetric={activeMetric}
+              selectedCityId={selectedCityId}
+              timelineIndex={timelineIndex}
+              severityFilter={severityFilter}
+              onMetricChange={setMetric}
+              onCitySelect={setSelectedCity}
+              onTimelineChange={setTimelineIndex}
+            />
+          ) : null}
 
-        {activeTab === "forecasting" ? (
-          <ForecastingAnalyticsTab
-            snapshot={snapshot}
-            selectedCityId={selectedCityId}
-            timelineIndex={timelineIndex}
-            selectedDateRange={selectedDateRange}
-            severityFilter={severityFilter}
-          />
-        ) : null}
+          {activeTab === "forecasting" ? (
+            <ForecastingAnalyticsTab
+              snapshot={snapshot}
+              selectedCityId={selectedCityId}
+              timelineIndex={timelineIndex}
+              selectedDateRange={selectedDateRange}
+              severityFilter={severityFilter}
+            />
+          ) : null}
 
-        {activeTab === "ai-tools" ? (
-          <AIToolsTab
-            snapshot={snapshot}
-            selectedCityId={selectedCityId}
-            messages={messages}
-            language={language}
-            briefing={currentBrief}
-            isSpeaking={isSpeaking}
-            isSending={chatMutation.isPending}
-            onLanguageChange={setLanguage}
-            onPlay={() => {
-              if (!currentBrief.text) {
-                return;
-              }
-              speak(currentBrief.text, currentBrief.language);
-            }}
-            onStop={stop}
-            onSend={(question) => {
-              void handleSend(question);
-            }}
-            onExampleClick={(question) => {
-              void handleSend(question);
-            }}
-            onDownloadPdf={(message) => {
-              void handleDownloadPdf(message);
-            }}
-            onGenerateAudio={() => {
-              void requestBriefing("ar");
-            }}
-          />
-        ) : null}
+          {activeTab === "ai-tools" ? (
+            <AIToolsTab
+              snapshot={snapshot}
+              selectedCityId={selectedCityId}
+              messages={messages}
+              language={language}
+              briefing={currentBrief}
+              isSpeaking={isSpeaking}
+              isSending={chatMutation.isPending}
+              onLanguageChange={setLanguage}
+              onPlay={() => {
+                if (!currentBrief.text) {
+                  return;
+                }
+                speak(currentBrief.text, currentBrief.language);
+              }}
+              onStop={stop}
+              onSend={(question) => {
+                void handleSend(question);
+              }}
+              onExampleClick={(question) => {
+                void handleSend(question);
+              }}
+              onDownloadPdf={(message) => {
+                void handleDownloadPdf(message);
+              }}
+              onGenerateAudio={() => {
+                void requestBriefing("ar");
+              }}
+            />
+          ) : null}
 
-        {activeTab === "alerts" ? (
-          <AlertsDecisionTab
-            snapshot={snapshot}
-            timelineIndex={timelineIndex}
-            severityFilter={severityFilter}
-            selectedCityId={selectedCityId}
-            onCitySelect={setSelectedCity}
-          />
-        ) : null}
+          {activeTab === "alerts" ? (
+            <AlertsDecisionTab
+              snapshot={snapshot}
+              timelineIndex={timelineIndex}
+              severityFilter={severityFilter}
+              selectedCityId={selectedCityId}
+              onCitySelect={setSelectedCity}
+            />
+          ) : null}
+        </div>
       </main>
 
       <ConnectDataModal

@@ -35,7 +35,7 @@ export const ForecastChartPanel = ({
       title={`SPI Forecast - ${city.emirate} (MSTT)`}
       subtitle="Observed SPI, model fit, future forecast, and confidence envelope"
     >
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-3 flex flex-wrap gap-2">
         <span className="rounded-full border border-rose-400/20 bg-rose-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-100">
           Actual observed
         </span>
@@ -50,7 +50,7 @@ export const ForecastChartPanel = ({
         </span>
       </div>
 
-      <div className="h-[260px]">
+      <div className="h-[220px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
             <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />

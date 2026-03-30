@@ -31,7 +31,7 @@ export const OverviewTab = ({
   const conditions = buildCurrentConditionRows(snapshot, severityFilter);
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.52fr)_420px]">
+    <div className="grid gap-4 xl:grid-cols-[minmax(0,1.58fr)_390px]">
       <MapPanel
         snapshot={snapshot}
         activeMetric={activeMetric}
@@ -43,7 +43,7 @@ export const OverviewTab = ({
         onTimelineChange={onTimelineChange}
       />
 
-      <aside className="space-y-4">
+      <aside className="space-y-4 xl:max-h-[calc(100vh-320px)] xl:overflow-y-auto xl:pr-1">
         <KpiGrid snapshot={snapshot} selectedCityId={selectedCityId} timelineIndex={timelineIndex} />
 
         <GlassPanel
@@ -56,7 +56,7 @@ export const OverviewTab = ({
               key={entry.emirateId}
               onClick={() => onCitySelect(entry.emirateId)}
               className={cn(
-                "w-full rounded-[22px] border p-4 text-left transition",
+                "w-full rounded-[20px] border p-3.5 text-left transition",
                 entry.emirateId === selectedCityId
                   ? "border-cyan-400/30 bg-cyan-400/10"
                   : "border-white/8 bg-white/5 hover:border-white/15"
@@ -74,7 +74,7 @@ export const OverviewTab = ({
                 </span>
               </div>
 
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2 text-sm text-slate-200">
                   <span className="inline-flex items-center gap-2 text-slate-400">
                     <Database className="h-3.5 w-3.5" />
@@ -114,7 +114,7 @@ export const OverviewTab = ({
           contentClassName="space-y-3"
         >
           {snapshot.analytics.dataSources.map((source) => (
-            <article key={source.id} className="rounded-[22px] border border-white/8 bg-white/5 p-4">
+            <article key={source.id} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="font-display text-base text-white">{source.title}</p>
@@ -124,8 +124,8 @@ export const OverviewTab = ({
                   {source.status}
                 </span>
               </div>
-              <p className="mt-3 text-sm leading-6 text-slate-300">{source.summary}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <p className="mt-2.5 text-sm leading-6 text-slate-300">{source.summary}</p>
+              <div className="mt-2.5 flex flex-wrap gap-2">
                 <span className="rounded-full border border-white/10 bg-slate-950/45 px-3 py-1 text-[11px] text-slate-300">
                   {source.cadence}
                 </span>

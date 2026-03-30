@@ -58,7 +58,7 @@ export const GlobalFiltersBar = ({
     }
     contentClassName="space-y-4"
   >
-    <div className="grid gap-4 xl:grid-cols-4">
+    <div className="grid gap-3 xl:grid-cols-4">
       <label className="space-y-2">
         <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-slate-500">
           <MapPinned className="h-3.5 w-3.5" />
@@ -67,7 +67,7 @@ export const GlobalFiltersBar = ({
         <select
           value={selectedCityId}
           onChange={(event) => onCityChange(event.target.value)}
-          className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none"
+          className="w-full rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white outline-none"
         >
           {snapshot.cities.map((city) => (
             <option key={city.id} value={city.id}>
@@ -85,7 +85,7 @@ export const GlobalFiltersBar = ({
         <select
           value={selectedDateRange}
           onChange={(event) => onDateRangeChange(event.target.value as DateRangeKey)}
-          className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none"
+          className="w-full rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white outline-none"
         >
           {snapshot.analytics.dateRanges.map((range) => (
             <option key={range.id} value={range.id}>
@@ -103,7 +103,7 @@ export const GlobalFiltersBar = ({
         <select
           value={severityFilter}
           onChange={(event) => onSeverityChange(event.target.value as SeverityFilter)}
-          className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none"
+          className="w-full rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white outline-none"
         >
           {severityOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -121,7 +121,7 @@ export const GlobalFiltersBar = ({
         <select
           value={activeMetric}
           onChange={(event) => onMetricChange(event.target.value as ClimateMetric)}
-          className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none"
+          className="w-full rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white outline-none"
         >
           {metricOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -133,13 +133,13 @@ export const GlobalFiltersBar = ({
     </div>
 
     <div className="grid gap-3 xl:grid-cols-3">
-      <div className="rounded-[24px] border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300">
+      <div className="rounded-[22px] border border-white/8 bg-white/5 px-4 py-2.5 text-sm text-slate-300">
         Harmonized grid: <span className="text-white">{snapshot.profile.harmonizedResolution}</span>
       </div>
-      <div className="rounded-[24px] border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300">
+      <div className="rounded-[22px] border border-white/8 bg-white/5 px-4 py-2.5 text-sm text-slate-300">
         Temporal scale: <span className="text-white">{snapshot.profile.temporalScale}</span>
       </div>
-      <div className="rounded-[24px] border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300">
+      <div className="rounded-[22px] border border-white/8 bg-white/5 px-4 py-2.5 text-sm text-slate-300">
         Forecast engine: <span className="text-white">{snapshot.analytics.model.name}</span>
       </div>
     </div>

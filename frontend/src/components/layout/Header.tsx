@@ -24,15 +24,15 @@ export const Header = ({
   onSwitchLive
 }: HeaderProps) => (
   <header className="sticky top-0 z-30 border-b border-white/8 bg-slate-950/50 backdrop-blur-2xl">
-    <div className="mx-auto flex max-w-[1600px] flex-col gap-4 px-5 py-4 lg:px-6">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+    <div className="mx-auto flex max-w-[1600px] flex-col gap-3 px-4 py-3 lg:px-6">
+      <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex items-start gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 shadow-glow">
-            <Waves className="h-6 w-6 text-slate-950" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 shadow-glow">
+            <Waves className="h-5 w-5 text-slate-950" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <p className="font-display text-2xl text-white">EcoVision UAE 2026</p>
+              <p className="font-display text-xl text-white">EcoVision UAE 2026</p>
               <span
                 className={cn(
                   "rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] ring-1",
@@ -90,7 +90,7 @@ export const Header = ({
       </div>
 
       <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto_auto]">
-        <div className="flex items-center gap-3 rounded-[24px] border border-white/8 bg-white/5 px-4 py-3">
+        <div className="flex items-center gap-3 rounded-[22px] border border-white/8 bg-white/5 px-4 py-2.5">
           <Sparkles className="h-4 w-4 text-cyan-200" />
           <div>
             <p className="text-sm font-semibold text-white">Ask AI, inspect MSTT forecasts, or connect climate data</p>
@@ -99,10 +99,10 @@ export const Header = ({
             </p>
           </div>
         </div>
-        <div className="rounded-[24px] border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300">
+        <div className="rounded-[22px] border border-white/8 bg-white/5 px-4 py-2.5 text-sm text-slate-300">
           {sourceCount} remote feeds
         </div>
-        <div className="rounded-[24px] border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300">
+        <div className="rounded-[22px] border border-white/8 bg-white/5 px-4 py-2.5 text-sm text-slate-300">
           {modelLabel}
         </div>
       </div>

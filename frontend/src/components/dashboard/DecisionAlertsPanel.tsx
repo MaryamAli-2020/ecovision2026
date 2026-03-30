@@ -94,7 +94,7 @@ export const DecisionAlertsPanel = ({
           {criticalCount > 0 ? `${criticalCount} critical` : "Digest ready"}
         </div>
       }
-      contentClassName="space-y-4"
+      contentClassName="space-y-3"
     >
       <div className="flex flex-wrap gap-2">
         {sortOptions.map((option) => (
@@ -116,7 +116,7 @@ export const DecisionAlertsPanel = ({
           <article
             key={alert.id}
             className={cn(
-              "rounded-[24px] border p-4",
+              "rounded-[20px] border p-3.5",
               alert.riskLevel === "critical"
                 ? "border-rose-400/30 bg-rose-500/10 shadow-ember"
                 : alert.riskLevel === "high"
@@ -134,9 +134,9 @@ export const DecisionAlertsPanel = ({
               </span>
             </div>
 
-            <p className="mt-3 text-sm leading-6 text-slate-200">{alert.summary}</p>
+            <p className="mt-2.5 text-sm leading-6 text-slate-200">{alert.summary}</p>
 
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-2.5 flex flex-wrap gap-2">
               {alert.channels.map((channel) => {
                 const Icon = channelMeta[channel].icon;
 
@@ -152,7 +152,7 @@ export const DecisionAlertsPanel = ({
               })}
             </div>
 
-            <div className="mt-3 rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-3">
+            <div className="mt-2.5 rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-3">
               <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">Decision Recipients</p>
               <p className="mt-2 text-sm text-slate-200">{alert.targetRoles.join(" / ")}</p>
               <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -163,7 +163,7 @@ export const DecisionAlertsPanel = ({
               </div>
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-3 flex flex-wrap gap-2">
               <a
                 href={`mailto:?subject=${encodeURIComponent(alert.emailSubject)}&body=${encodeURIComponent(alert.emailBody)}`}
                 className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/25 bg-cyan-400/10 px-3 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/20"

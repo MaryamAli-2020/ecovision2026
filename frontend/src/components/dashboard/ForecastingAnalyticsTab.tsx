@@ -40,7 +40,7 @@ const SeasonalMatrix = ({
 }: {
   values: ReturnType<typeof buildSeasonalPattern>;
 }) => (
-  <div className="grid grid-cols-3 gap-3 md:grid-cols-4 xl:grid-cols-6">
+  <div className="grid grid-cols-3 gap-2 md:grid-cols-4 xl:grid-cols-6">
     {values.map((entry) => {
       const riskTone =
         entry.spi < -1
@@ -50,9 +50,9 @@ const SeasonalMatrix = ({
             : "border-emerald-400/20 bg-emerald-500/8";
 
       return (
-        <div key={entry.month} className={cn("rounded-[22px] border p-3", riskTone)}>
+        <div key={entry.month} className={cn("rounded-[18px] border p-2.5", riskTone)}>
           <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">{entry.month}</p>
-          <p className="mt-2 text-sm text-white">SPI {entry.spi.toFixed(2)}</p>
+          <p className="mt-1.5 text-sm text-white">SPI {entry.spi.toFixed(2)}</p>
           <p className="mt-1 text-xs text-slate-300">NDVI {entry.ndvi.toFixed(2)}</p>
           <p className="mt-1 text-xs text-slate-300">LST {entry.lst.toFixed(1)} C</p>
           <p className="mt-1 text-xs text-slate-300">Soil {entry.soilMoisture.toFixed(2)}</p>
@@ -73,22 +73,23 @@ const SpatialForecastHeatmap = ({
     if (severityFilter === "all") {
       return true;
     }
+
     const priorities = { low: 0, moderate: 1, high: 2, critical: 3 } as const;
     return priorities[cell.droughtSeverity] >= priorities[severityFilter];
   });
 
   const layout = [
-    { id: "ras-al-khaimah", left: "56%", top: "4%" },
+    { id: "ras-al-khaimah", left: "55%", top: "5%" },
     { id: "umm-al-quwain", left: "46%", top: "22%" },
-    { id: "ajman", left: "40%", top: "30%" },
-    { id: "sharjah", left: "51%", top: "34%" },
-    { id: "dubai", left: "34%", top: "42%" },
-    { id: "abu-dhabi", left: "12%", top: "58%" },
-    { id: "fujairah", left: "68%", top: "44%" }
+    { id: "ajman", left: "39%", top: "29%" },
+    { id: "sharjah", left: "49%", top: "34%" },
+    { id: "dubai", left: "32%", top: "42%" },
+    { id: "abu-dhabi", left: "11%", top: "56%" },
+    { id: "fujairah", left: "66%", top: "43%" }
   ];
 
   return (
-    <div className="relative min-h-[340px] overflow-hidden rounded-[26px] border border-white/8 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(2,6,23,0.85))]">
+    <div className="relative min-h-[280px] overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(2,6,23,0.85))]">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:48px_48px]" />
       {layout.map((position) => {
         const cell = visibleCells.find((entry) => entry.emirateId === position.id);
@@ -109,15 +110,15 @@ const SpatialForecastHeatmap = ({
         return (
           <div
             key={cell.id}
-            className={cn("absolute w-[170px] rounded-[22px] border p-4 shadow-glow backdrop-blur-xl", tone)}
+            className={cn("absolute w-[148px] rounded-[18px] border p-3 shadow-glow backdrop-blur-xl", tone)}
             style={{ left: position.left, top: position.top }}
           >
             <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{cell.label}</p>
-            <p className="mt-2 font-display text-xl text-white">{cell.predictedSpi.toFixed(2)} SPI</p>
-            <div className="mt-3 grid gap-1 text-xs text-slate-200">
+            <p className="mt-1.5 font-display text-lg text-white">{cell.predictedSpi.toFixed(2)} SPI</p>
+            <div className="mt-2 grid gap-1 text-xs text-slate-200">
               <p>Confidence {cell.confidence.toFixed(0)}%</p>
               <p>RMSE {cell.rmse.toFixed(2)}</p>
-              <p>R² {cell.r2.toFixed(2)}</p>
+              <p>R2 {cell.r2.toFixed(2)}</p>
             </div>
           </div>
         );
@@ -141,60 +142,34 @@ export const ForecastingAnalyticsTab = ({
   const regionalPerformance = buildRegionalPerformanceData(snapshot, severityFilter);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="grid gap-3 xl:grid-cols-4">
         {snapshot.analytics.anomalySignals.map((signal) => (
-          <div key={signal.label} className="rounded-[24px] border border-white/8 bg-white/5 p-4">
+          <div key={signal.label} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{signal.label}</p>
-            <p className="mt-3 font-display text-3xl text-white">{signal.value.toFixed(2)}</p>
-            <p className="mt-2 text-sm text-slate-300">{signal.note}</p>
+            <p className="mt-2 font-display text-2xl text-white">{signal.value.toFixed(2)}</p>
+            <p className="mt-1.5 text-sm leading-6 text-slate-300">{signal.note}</p>
           </div>
         ))}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(360px,1fr)]">
-        <div className="space-y-6">
+      <div className="grid gap-4 xl:grid-cols-12">
+        <div className="space-y-4 xl:col-span-7">
           <ForecastChartPanel
             snapshot={snapshot}
             selectedCityId={selectedCityId}
             timelineIndex={timelineIndex}
           />
-
-          <GlassPanel
-            title="Driver Forecast Signals"
-            subtitle="Projected NDVI, land surface temperature, and soil moisture across the active outlook window."
-            rightSlot={<Waves className="h-4 w-4 text-cyan-200" />}
-          >
-            <div className="h-[240px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={drivers} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
-                  <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
-                  <XAxis dataKey="label" tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
-                  <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
-                  <Tooltip
-                    contentStyle={{
-                      background: "rgba(15,23,42,0.96)",
-                      border: "1px solid rgba(148,163,184,0.18)",
-                      borderRadius: 18,
-                      color: "#e2e8f0"
-                    }}
-                  />
-                  <Line type="monotone" dataKey="ndvi" stroke={chartColors[2]} strokeWidth={3} dot={false} />
-                  <Line type="monotone" dataKey="lst" stroke={chartColors[3]} strokeWidth={3} dot={false} />
-                  <Line type="monotone" dataKey="soilMoisture" stroke={chartColors[0]} strokeWidth={3} dot={false} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </GlassPanel>
         </div>
 
         <GlassPanel
+          className="xl:col-span-5"
           title="Model Insights"
-          subtitle="Attention-style feature influence, architecture settings, and forecast interpretability for the active Emirate."
+          subtitle="Feature influence, compact architecture notes, and interpretability for the active Emirate."
           rightSlot={<BrainCircuit className="h-4 w-4 text-cyan-200" />}
-          contentClassName="space-y-5"
+          contentClassName="space-y-4"
         >
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {selectedCity.featureInfluence.map((entry) => (
               <div key={entry.feature}>
                 <div className="flex items-center justify-between gap-3">
@@ -204,31 +179,31 @@ export const ForecastingAnalyticsTab = ({
                 <div className="mt-2 h-2 rounded-full bg-white/8">
                   <div className="h-2 rounded-full bg-gradient-to-r from-cyan-300 to-blue-500" style={{ width: `${entry.weight * 100}%` }} />
                 </div>
-                <p className="mt-2 text-xs leading-5 text-slate-400">{entry.narrative}</p>
+                <p className="mt-1.5 text-xs leading-5 text-slate-400">{entry.narrative}</p>
               </div>
             ))}
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-[22px] border border-white/8 bg-white/5 p-4">
+            <div className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
               <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Architecture</p>
-              <p className="mt-3 text-sm text-slate-200">
+              <p className="mt-2 text-sm text-slate-200">
                 {snapshot.analytics.model.transformerLayers} layers / {snapshot.analytics.model.attentionHeads} heads / {snapshot.analytics.model.embeddingDimension}d embedding
               </p>
             </div>
-            <div className="rounded-[22px] border border-white/8 bg-white/5 p-4">
+            <div className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
               <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Optimization</p>
-              <p className="mt-3 text-sm text-slate-200">
+              <p className="mt-2 text-sm text-slate-200">
                 Adam, LR {snapshot.analytics.model.learningRate}, dropout {snapshot.analytics.model.dropoutRate}, batch {snapshot.analytics.model.batchSize}
               </p>
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="grid gap-3">
             {snapshot.analytics.model.pipeline.map((stage) => (
-              <div key={stage.title} className="rounded-[22px] border border-white/8 bg-white/5 p-4">
+              <div key={stage.title} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
                 <p className="font-semibold text-white">{stage.title}</p>
-                <div className="mt-2 space-y-1 text-sm text-slate-300">
+                <div className="mt-1.5 space-y-1 text-sm text-slate-300">
                   {stage.details.map((detail) => (
                     <p key={detail}>{detail}</p>
                   ))}
@@ -239,20 +214,56 @@ export const ForecastingAnalyticsTab = ({
         </GlassPanel>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.3fr)_minmax(360px,1fr)]">
+      <div className="grid gap-4 xl:grid-cols-3">
+        <GlassPanel
+          title="Driver Forecast Signals"
+          subtitle="Projected NDVI, LST, and soil moisture in the active outlook."
+          rightSlot={<Waves className="h-4 w-4 text-cyan-200" />}
+        >
+          <div className="h-[210px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={drivers} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
+                <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
+                <XAxis dataKey="label" tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    background: "rgba(15,23,42,0.96)",
+                    border: "1px solid rgba(148,163,184,0.18)",
+                    borderRadius: 18,
+                    color: "#e2e8f0"
+                  }}
+                />
+                <Line type="monotone" dataKey="ndvi" stroke={chartColors[2]} strokeWidth={3} dot={false} />
+                <Line type="monotone" dataKey="lst" stroke={chartColors[3]} strokeWidth={3} dot={false} />
+                <Line type="monotone" dataKey="soilMoisture" stroke={chartColors[0]} strokeWidth={3} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </GlassPanel>
+
         <GlassPanel
           title={`Monthly SPI Archive - ${selectedCity.emirate}`}
-          subtitle="Historical monthly SPI patterns across the selected archive window, with predicted SPI overlay."
+          subtitle="Historical monthly SPI patterns with predicted SPI overlay."
           rightSlot={<Activity className="h-4 w-4 text-cyan-200" />}
         >
-          <div className="h-[320px]">
+          <div className="h-[210px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trendData} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
                 <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
-                <XAxis dataKey="timestamp" tickFormatter={(value) => new Date(value).getFullYear().toString()} tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} minTickGap={24} />
+                <XAxis
+                  dataKey="timestamp"
+                  tickFormatter={(value) => new Date(value).getFullYear().toString()}
+                  tick={{ fill: "#94a3b8", fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={false}
+                  minTickGap={24}
+                />
                 <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
                 <Tooltip
-                  labelFormatter={(value) => new Date(String(value)).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                  labelFormatter={(value) =>
+                    new Date(String(value)).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+                  }
                   contentStyle={{
                     background: "rgba(15,23,42,0.96)",
                     border: "1px solid rgba(148,163,184,0.18)",
@@ -269,27 +280,27 @@ export const ForecastingAnalyticsTab = ({
 
         <GlassPanel
           title="Seasonal Pattern Matrix"
-          subtitle="Monthly seasonal signature for SPI, NDVI, LST, and soil moisture over the selected date range."
+          subtitle="Monthly signature for SPI, NDVI, LST, and soil moisture over the selected date range."
         >
           <SeasonalMatrix values={seasonalData} />
         </GlassPanel>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(360px,1fr)]">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_360px]">
         <GlassPanel
           title="Forecasted Drought Severity Map"
-          subtitle="Spatial heatmap of predicted SPI, drought severity, confidence, RMSE, and R² across the seven Emirates."
+          subtitle="Predicted SPI, drought severity, confidence, RMSE, and R2 across the seven Emirates."
           rightSlot={<BarChart3 className="h-4 w-4 text-cyan-200" />}
         >
           <SpatialForecastHeatmap snapshot={snapshot} severityFilter={severityFilter} />
         </GlassPanel>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           <GlassPanel
             title="Compare Models"
-            subtitle="MSTT performance against LSTM and GRU baselines using RMSE, MAE, and R²."
+            subtitle="MSTT performance against LSTM and GRU baselines."
           >
-            <div className="h-[260px]">
+            <div className="h-[180px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={modelComparison} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
                   <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
@@ -311,14 +322,14 @@ export const ForecastingAnalyticsTab = ({
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div className="mt-4 space-y-3">
+            <div className="mt-3 space-y-2.5">
               {modelComparison.map((entry) => (
-                <div key={entry.model} className="rounded-[22px] border border-white/8 bg-white/5 p-4">
+                <div key={entry.model} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
                   <div className="flex items-center justify-between gap-3">
                     <p className="font-display text-base text-white">{entry.model}</p>
-                    <span className="text-xs text-slate-400">R² {entry.r2.toFixed(2)}</span>
+                    <span className="text-xs text-slate-400">R2 {entry.r2.toFixed(2)}</span>
                   </div>
-                  <p className="mt-2 text-sm text-slate-300">{entry.note}</p>
+                  <p className="mt-1.5 text-sm text-slate-300">{entry.note}</p>
                 </div>
               ))}
             </div>
@@ -326,21 +337,21 @@ export const ForecastingAnalyticsTab = ({
 
           <GlassPanel
             title="Regional Performance"
-            subtitle="Per-Emirate RMSE, R², and forecast confidence for operational comparison."
+            subtitle="Per-Emirate RMSE, R2, and forecast confidence for comparison."
           >
-            <div className="space-y-3">
+            <div className="space-y-2.5 xl:max-h-[360px] xl:overflow-y-auto xl:pr-1">
               {regionalPerformance.map((entry) => (
-                <div key={entry.emirateId} className="rounded-[22px] border border-white/8 bg-white/5 p-4">
+                <div key={entry.emirateId} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
                   <div className="flex items-center justify-between gap-3">
                     <p className="font-display text-base text-white">{entry.emirate}</p>
                     <span className="text-xs text-slate-400">{formatPercent(entry.confidence)}</span>
                   </div>
-                  <div className="mt-3 grid gap-2 text-sm text-slate-300 sm:grid-cols-3">
+                  <div className="mt-2.5 grid gap-2 text-sm text-slate-300 sm:grid-cols-3">
                     <p>RMSE {entry.rmse.toFixed(2)}</p>
                     <p>MAE {entry.mae.toFixed(2)}</p>
-                    <p>R² {entry.r2.toFixed(2)}</p>
+                    <p>R2 {entry.r2.toFixed(2)}</p>
                   </div>
-                  <p className="mt-2 text-xs leading-5 text-slate-400">{entry.note}</p>
+                  <p className="mt-1.5 text-xs leading-5 text-slate-400">{entry.note}</p>
                 </div>
               ))}
             </div>

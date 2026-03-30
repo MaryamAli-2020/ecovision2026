@@ -45,7 +45,7 @@ export const DashboardTabs = ({ activeTab, onChange }: DashboardTabsProps) => (
           key={tab.id}
           onClick={() => onChange(tab.id)}
           className={cn(
-            "rounded-[24px] border p-4 text-left transition",
+            "rounded-[22px] border p-3.5 text-left transition",
             activeTab === tab.id
               ? "border-cyan-400/30 bg-cyan-400/10 shadow-glow"
               : "border-white/8 bg-white/5 hover:border-white/15"
@@ -61,8 +61,8 @@ export const DashboardTabs = ({ activeTab, onChange }: DashboardTabsProps) => (
               <Icon className="h-4 w-4" />
             </div>
             <div>
-              <p className="font-display text-base text-white">{tab.label}</p>
-              <p className="mt-1 text-xs text-slate-400">{tab.description}</p>
+              <p className="font-display text-sm text-white">{tab.label}</p>
+              <p className="mt-1 text-[11px] leading-5 text-slate-400">{tab.description}</p>
             </div>
           </div>
         </button>
