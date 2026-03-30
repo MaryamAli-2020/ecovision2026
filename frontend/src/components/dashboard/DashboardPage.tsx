@@ -147,8 +147,6 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
         mode={snapshot.mode}
         healthReady={!isHealthLoading && Boolean(dashboard.health)}
         criticalSignals={criticalSignals}
-        sourceCount={snapshot.analytics.dataSources.length}
-        modelLabel="MSTT Forecasting"
         onOpenConnect={() => setConnectModalOpen(true)}
         onSwitchDemo={handleUseDemo}
         onSwitchLive={() => {
@@ -158,7 +156,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
         }}
       />
 
-      <main className="mx-auto max-w-[1600px] space-y-4 px-4 py-4 lg:flex lg:min-h-0 lg:w-full lg:flex-1 lg:flex-col lg:overflow-hidden lg:px-6">
+      <main className="mx-auto max-w-[1600px] space-y-3 px-4 py-3 lg:flex lg:min-h-0 lg:w-full lg:flex-1 lg:flex-col lg:overflow-hidden lg:px-6">
         <GlobalFiltersBar
           snapshot={snapshot}
           activeMetric={activeMetric}

@@ -4,9 +4,10 @@ import type {
   DateRangeKey,
   SeverityFilter
 } from "@ecovision/shared";
+import type { ReactNode } from "react";
 import { Filter, Globe2, MapPinned, ThermometerSun } from "lucide-react";
 
-import { GlassPanel } from "@/components/ui/GlassPanel";
+import { cn } from "@/lib/utils";
 
 interface GlobalFiltersBarProps {
   snapshot: DashboardSnapshot;
@@ -35,6 +36,34 @@ const severityOptions: Array<{ value: SeverityFilter; label: string }> = [
   { value: "critical", label: "Critical only" }
 ];
 
+const CompactSelect = ({
+  icon,
+  label,
+  value,
+  onChange,
+  children
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  children: React.ReactNode;
+}) => (
+  <label className="flex min-w-[180px] flex-1 items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 lg:min-w-[190px]">
+    <span className="shrink-0 text-slate-500">{icon}</span>
+    <div className="min-w-0 flex-1">
+      <span className="block text-[10px] uppercase tracking-[0.22em] text-slate-500">{label}</span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-0.5 w-full truncate bg-transparent text-sm font-medium text-white outline-none"
+      >
+        {children}
+      </select>
+    </div>
+  </label>
+);
+
 export const GlobalFiltersBar = ({
   snapshot,
   activeMetric,
@@ -46,102 +75,94 @@ export const GlobalFiltersBar = ({
   onDateRangeChange,
   onSeverityChange
 }: GlobalFiltersBarProps) => (
-  <GlassPanel
-    className="overflow-hidden"
-    title="Global Climate Filters"
-    subtitle="Selections remain synchronized across overview, forecasting, AI, and alert workflows."
-    rightSlot={
-      <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-cyan-100">
-        <Globe2 className="h-3.5 w-3.5" />
-        {snapshot.analytics.dataSources.length} live-ready sources
+  <section className="rounded-[22px] border border-white/10 bg-slate-950/60 px-4 py-3 shadow-glow backdrop-blur-xl">
+    <div className="flex flex-wrap items-center gap-2">
+      <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-200">
+        <Filter className="h-3.5 w-3.5 text-cyan-200" />
+        Filters
       </div>
-    }
-    contentClassName="space-y-4"
-  >
-    <div className="grid gap-3 xl:grid-cols-4">
-      <label className="space-y-2">
-        <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-slate-500">
-          <MapPinned className="h-3.5 w-3.5" />
-          Emirate
-        </span>
-        <select
-          value={selectedCityId}
-          onChange={(event) => onCityChange(event.target.value)}
-          className="w-full rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white outline-none"
-        >
-          {snapshot.cities.map((city) => (
-            <option key={city.id} value={city.id}>
-              {city.emirate}
-            </option>
-          ))}
-        </select>
-      </label>
 
-      <label className="space-y-2">
-        <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-slate-500">
-          <Filter className="h-3.5 w-3.5" />
-          Date Range
+      <div className="hidden flex-wrap items-center gap-2 xl:flex xl:ml-auto">
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
+          {snapshot.profile.harmonizedResolution}
         </span>
-        <select
-          value={selectedDateRange}
-          onChange={(event) => onDateRangeChange(event.target.value as DateRangeKey)}
-          className="w-full rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white outline-none"
-        >
-          {snapshot.analytics.dateRanges.map((range) => (
-            <option key={range.id} value={range.id}>
-              {range.label}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <label className="space-y-2">
-        <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-slate-500">
-          <ThermometerSun className="h-3.5 w-3.5" />
-          Severity
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
+          {snapshot.profile.temporalScale}
         </span>
-        <select
-          value={severityFilter}
-          onChange={(event) => onSeverityChange(event.target.value as SeverityFilter)}
-          className="w-full rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white outline-none"
-        >
-          {severityOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <label className="space-y-2">
-        <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-slate-500">
-          <Filter className="h-3.5 w-3.5" />
-          Indicator
+        <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-[11px] text-cyan-100">
+          {snapshot.analytics.model.name}
         </span>
-        <select
-          value={activeMetric}
-          onChange={(event) => onMetricChange(event.target.value as ClimateMetric)}
-          className="w-full rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white outline-none"
-        >
-          {metricOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
-    </div>
-
-    <div className="grid gap-3 xl:grid-cols-3">
-      <div className="rounded-[22px] border border-white/8 bg-white/5 px-4 py-2.5 text-sm text-slate-300">
-        Harmonized grid: <span className="text-white">{snapshot.profile.harmonizedResolution}</span>
-      </div>
-      <div className="rounded-[22px] border border-white/8 bg-white/5 px-4 py-2.5 text-sm text-slate-300">
-        Temporal scale: <span className="text-white">{snapshot.profile.temporalScale}</span>
-      </div>
-      <div className="rounded-[22px] border border-white/8 bg-white/5 px-4 py-2.5 text-sm text-slate-300">
-        Forecast engine: <span className="text-white">{snapshot.analytics.model.name}</span>
+        <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-cyan-100">
+          <Globe2 className="h-3.5 w-3.5" />
+          {snapshot.analytics.dataSources.length} sources
+        </span>
       </div>
     </div>
-  </GlassPanel>
+
+    <div className="mt-3 flex flex-wrap gap-3">
+      <CompactSelect
+        icon={<MapPinned className="h-4 w-4" />}
+        label="Emirate"
+        value={selectedCityId}
+        onChange={onCityChange}
+      >
+        {snapshot.cities.map((city) => (
+          <option key={city.id} value={city.id}>
+            {city.emirate}
+          </option>
+        ))}
+      </CompactSelect>
+
+      <CompactSelect
+        icon={<Filter className="h-4 w-4" />}
+        label="Date Range"
+        value={selectedDateRange}
+        onChange={(value) => onDateRangeChange(value as DateRangeKey)}
+      >
+        {snapshot.analytics.dateRanges.map((range) => (
+          <option key={range.id} value={range.id}>
+            {range.label}
+          </option>
+        ))}
+      </CompactSelect>
+
+      <CompactSelect
+        icon={<ThermometerSun className="h-4 w-4" />}
+        label="Severity"
+        value={severityFilter}
+        onChange={(value) => onSeverityChange(value as SeverityFilter)}
+      >
+        {severityOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </CompactSelect>
+
+      <CompactSelect
+        icon={<Filter className="h-4 w-4" />}
+        label="Indicator"
+        value={activeMetric}
+        onChange={(value) => onMetricChange(value as ClimateMetric)}
+      >
+        {metricOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </CompactSelect>
+    </div>
+
+    <div className="mt-3 flex flex-wrap items-center gap-2 xl:hidden">
+      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
+        {snapshot.profile.harmonizedResolution}
+      </span>
+      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
+        {snapshot.profile.temporalScale}
+      </span>
+      <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-[11px] text-cyan-100">
+        MSTT
+      </span>
+    </div>
+  </section>
 );
