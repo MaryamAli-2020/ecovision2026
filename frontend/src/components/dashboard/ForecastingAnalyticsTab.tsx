@@ -302,9 +302,9 @@ export const ForecastingAnalyticsTab = ({
             <SpatialForecastHeatmap snapshot={snapshot} severityFilter={severityFilter} />
           </GlassPanel>
 
-          <div className="space-y-4">
-            <GlassPanel title="Compare Models">
-              <div className="h-[240px]">
+          <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[minmax(260px,0.8fr)_minmax(0,1fr)] xl:gap-4 xl:space-y-0">
+            <GlassPanel title="Compare Models" className="h-full" contentClassName="h-full p-3.5">
+              <div className="h-full min-h-[220px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={modelComparison} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
                     <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
@@ -328,8 +328,8 @@ export const ForecastingAnalyticsTab = ({
               </div>
             </GlassPanel>
 
-            <GlassPanel title="Regional Performance">
-              <div className="space-y-2.5 xl:max-h-[360px] xl:overflow-y-auto xl:pr-1">
+            <GlassPanel title="Regional Performance" className="h-full" contentClassName="h-full p-3.5">
+              <div className="space-y-2.5 xl:h-full xl:overflow-y-auto xl:pr-1">
                 {regionalPerformance.map((entry) => (
                   <div key={entry.emirateId} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
                     <div className="flex items-center justify-between gap-3">

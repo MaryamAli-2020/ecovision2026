@@ -47,55 +47,58 @@ export const AlertsDecisionTab = ({
             const point = getTimelinePoint(city, timelineIndex);
 
             return (
-              <article className="flex h-full flex-col rounded-[24px] border border-white/8 bg-white/5 p-4">
+              <article className="flex h-full min-h-0 flex-col rounded-[22px] border border-white/8 bg-white/5 p-3.5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="font-display text-2xl text-white">{city.emirate}</p>
-                    <p className="mt-1 text-sm text-slate-400">{city.region}</p>
+                    <p className="font-display text-[1.75rem] leading-none text-white">{city.emirate}</p>
+                    <p className="mt-1 text-[13px] text-slate-400">{city.region}</p>
                   </div>
                   <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ring-1 ${riskBadgeClasses[point.riskLevel]}`}>
                     {point.riskLevel}
                   </span>
                 </div>
 
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-[20px] border border-white/8 bg-slate-950/45 p-3">
+                <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+                  <div className="rounded-[18px] border border-white/8 bg-slate-950/45 p-3">
                     <div className="flex items-center gap-2 text-slate-400">
                       <TriangleAlert className="h-4 w-4" />
                       <span className="text-[11px] uppercase tracking-[0.18em]">Risk score</span>
                     </div>
-                    <p className="mt-2 font-display text-2xl text-white">
+                    <p className="mt-2 font-display text-[1.75rem] leading-none text-white">
                       {Math.round(calculatePointRiskScore(point))}
                     </p>
-                    <p className="mt-1 text-sm text-slate-300">Forecast confidence {formatPercent(point.forecastAccuracy)}</p>
+                    <p className="mt-1 text-[13px] text-slate-300">Confidence {formatPercent(point.forecastAccuracy)}</p>
                   </div>
 
-                  <div className="rounded-[20px] border border-white/8 bg-slate-950/45 p-3">
+                  <div className="rounded-[18px] border border-white/8 bg-slate-950/45 p-3">
                     <div className="flex items-center gap-2 text-slate-400">
                       <Siren className="h-4 w-4" />
                       <span className="text-[11px] uppercase tracking-[0.18em]">Rainfall deficit</span>
                     </div>
-                    <p className="mt-2 font-display text-2xl text-white">{point.rainfallDeficit?.toFixed(0) ?? "N/A"} mm</p>
-                    <p className="mt-1 text-sm text-slate-300">Projected SPI {point.forecast?.toFixed(1) ?? "N/A"}</p>
+                    <p className="mt-2 font-display text-[1.75rem] leading-none text-white">{point.rainfallDeficit?.toFixed(0) ?? "N/A"} mm</p>
+                    <p className="mt-1 text-[13px] text-slate-300">Projected SPI {point.forecast?.toFixed(1) ?? "N/A"}</p>
                   </div>
                 </div>
 
-                <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                  <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                <div className="mt-2.5 grid gap-2 sm:grid-cols-3">
+                  <div className="rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
                     <span className="text-[11px] uppercase tracking-[0.18em] text-slate-500">SPI</span>
-                    <p className="mt-1 text-base text-white">{point.spi?.toFixed(1) ?? "N/A"}</p>
+                    <p className="mt-1 text-[15px] text-white">{point.spi?.toFixed(1) ?? "N/A"}</p>
                   </div>
-                  <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                  <div className="rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
                     <span className="text-[11px] uppercase tracking-[0.18em] text-slate-500">Soil</span>
-                    <p className="mt-1 text-base text-white">{point.soilMoisture?.toFixed(2) ?? "N/A"}</p>
+                    <p className="mt-1 text-[15px] text-white">{point.soilMoisture?.toFixed(2) ?? "N/A"}</p>
                   </div>
-                  <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                  <div className="rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
                     <span className="text-[11px] uppercase tracking-[0.18em] text-slate-500">LST</span>
-                    <p className="mt-1 text-base text-white">{point.lst?.toFixed(1) ?? "N/A"} C</p>
+                    <p className="mt-1 text-[15px] text-white">{point.lst?.toFixed(1) ?? "N/A"} C</p>
                   </div>
                 </div>
 
-                <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">{city.policyNote}</p>
+                <div className="mt-2.5 rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">Action</p>
+                  <p className="mt-1 line-clamp-2 text-[13px] leading-5 text-slate-300">{city.policyNote}</p>
+                </div>
               </article>
             );
           }}

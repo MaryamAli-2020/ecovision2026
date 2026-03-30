@@ -72,22 +72,22 @@ export const EmirateCarousel = <T extends EmirateCarouselItem>({
           </button>
         </div>
       }
-      contentClassName="flex h-full min-h-0 flex-col"
+      contentClassName="flex h-full min-h-0 flex-col gap-3 p-3.5"
     >
-      <div className="overflow-hidden rounded-[22px]">
+      <div className="min-h-[320px] flex-1 overflow-hidden rounded-[22px] xl:min-h-0">
         <div
-          className="flex transition-transform duration-300 ease-out"
+          className="flex h-full transition-transform duration-300 ease-out"
           style={{ transform: `translateX(-${activeIndex * 100}%)` }}
         >
           {items.map((item) => (
-            <div key={item.id} className={cn("w-full shrink-0", slideClassName)}>
+            <div key={item.id} className={cn("flex h-full min-h-0 w-full shrink-0", slideClassName)}>
               {renderSlide(item)}
             </div>
           ))}
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-2">
         {items.map((item, index) => (
           <button
             key={item.id}

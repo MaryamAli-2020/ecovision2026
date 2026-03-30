@@ -89,78 +89,76 @@ export const OverviewTab = ({
               const weatherNote = buildWeatherNote(point.lst, point.soilMoisture);
 
               return (
-                <article className="flex h-full flex-col rounded-[24px] border border-white/8 bg-white/5 p-4">
+                <article className="flex h-full min-h-0 flex-col rounded-[22px] border border-white/8 bg-white/5 p-3.5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-display text-2xl text-white">{city.emirate}</p>
-                      <p className="mt-1 text-sm text-slate-400">{city.region}</p>
+                      <p className="font-display text-[1.75rem] leading-none text-white">{city.emirate}</p>
+                      <p className="mt-1 text-[13px] text-slate-400">{city.region}</p>
                     </div>
                     <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ring-1 ${riskBadgeClasses[point.riskLevel]}`}>
                       {point.riskLevel}
                     </span>
                   </div>
 
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-[20px] border border-white/8 bg-slate-950/45 p-3">
+                  <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+                    <div className="rounded-[18px] border border-white/8 bg-slate-950/45 p-3">
                       <div className="flex items-center gap-2 text-slate-400">
                         <CloudSun className="h-4 w-4" />
                         <span className="text-[11px] uppercase tracking-[0.18em]">Weather</span>
                       </div>
-                      <p className="mt-2 font-display text-lg text-white">{weatherLabel}</p>
-                      <p className="mt-1 text-sm text-slate-300">{weatherNote}</p>
+                      <p className="mt-2 font-display text-base text-white">{weatherLabel}</p>
+                      <p className="mt-1 text-[13px] text-slate-300">{weatherNote}</p>
                     </div>
 
-                    <div className="rounded-[20px] border border-white/8 bg-slate-950/45 p-3">
+                    <div className="rounded-[18px] border border-white/8 bg-slate-950/45 p-3">
                       <div className="flex items-center gap-2 text-slate-400">
                         <ShieldAlert className="h-4 w-4" />
                         <span className="text-[11px] uppercase tracking-[0.18em]">Drought</span>
                       </div>
-                      <p className="mt-2 font-display text-lg text-white">SPI {point.spi?.toFixed(1) ?? "N/A"}</p>
-                      <p className="mt-1 text-sm text-slate-300">
+                      <p className="mt-2 font-display text-base text-white">SPI {point.spi?.toFixed(1) ?? "N/A"}</p>
+                      <p className="mt-1 text-[13px] text-slate-300">
                         Confidence {formatPercent(point.forecastAccuracy)}
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                  <div className="mt-2.5 grid gap-2 sm:grid-cols-2">
+                    <div className="rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
                       <span className="inline-flex items-center gap-2 text-slate-400">
                         <Database className="h-3.5 w-3.5" />
                         Risk score
                       </span>
-                      <p className="mt-1 text-base text-white">{Math.round(calculatePointRiskScore(point))}</p>
+                      <p className="mt-1 text-[15px] text-white">{Math.round(calculatePointRiskScore(point))}</p>
                     </div>
-                    <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                    <div className="rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
                       <span className="inline-flex items-center gap-2 text-slate-400">
                         <Wind className="h-3.5 w-3.5" />
                         Rainfall deficit
                       </span>
-                      <p className="mt-1 text-base text-white">{point.rainfallDeficit?.toFixed(0) ?? "N/A"} mm</p>
+                      <p className="mt-1 text-[15px] text-white">{point.rainfallDeficit?.toFixed(0) ?? "N/A"} mm</p>
                     </div>
-                    <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                    <div className="rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
                       <span className="inline-flex items-center gap-2 text-slate-400">
                         <Leaf className="h-3.5 w-3.5" />
                         NDVI
                       </span>
-                      <p className="mt-1 text-base text-white">{point.ndvi?.toFixed(2) ?? "N/A"}</p>
+                      <p className="mt-1 text-[15px] text-white">{point.ndvi?.toFixed(2) ?? "N/A"}</p>
                     </div>
-                    <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                    <div className="rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
                       <span className="inline-flex items-center gap-2 text-slate-400">
                         <ThermometerSun className="h-3.5 w-3.5" />
                         LST
                       </span>
-                      <p className="mt-1 text-base text-white">{point.lst?.toFixed(1) ?? "N/A"} C</p>
+                      <p className="mt-1 text-[15px] text-white">{point.lst?.toFixed(1) ?? "N/A"} C</p>
                     </div>
-                    <div className="rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200 sm:col-span-2">
+                    <div className="rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200 sm:col-span-2">
                       <span className="inline-flex items-center gap-2 text-slate-400">
                         <Droplets className="h-3.5 w-3.5" />
                         Soil moisture
                       </span>
-                      <p className="mt-1 text-base text-white">{point.soilMoisture?.toFixed(2) ?? "N/A"}</p>
+                      <p className="mt-1 text-[15px] text-white">{point.soilMoisture?.toFixed(2) ?? "N/A"}</p>
                     </div>
                   </div>
-
-                  <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">{city.summaryText}</p>
                 </article>
               );
             }}
