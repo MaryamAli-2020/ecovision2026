@@ -36,6 +36,7 @@ export const EmirateCarousel = <T extends EmirateCarouselItem>({
     0,
     items.findIndex((item) => item.id === activeId)
   );
+  const activeItem = items[activeIndex] ?? items[0];
 
   const goTo = (nextIndex: number) => {
     if (!items.length) {
@@ -75,15 +76,15 @@ export const EmirateCarousel = <T extends EmirateCarouselItem>({
       contentClassName="flex h-full min-h-0 flex-col gap-3 overflow-hidden p-3.5"
     >
       <div className="min-h-[320px] min-w-0 flex-1 overflow-hidden rounded-[22px] xl:min-h-0">
-        <div
-          className="flex h-full min-w-0 transition-transform duration-300 ease-out"
-          style={{ transform: `translateX(-${activeIndex * 100}%)` }}
-        >
-          {items.map((item) => (
-            <div key={item.id} className={cn("flex h-full min-h-0 w-full min-w-0 shrink-0", slideClassName)}>
-              {renderSlide(item)}
+        <div className="flex h-full min-h-0 min-w-0">
+          {activeItem ? (
+            <div
+              key={activeItem.id}
+              className={cn("flex h-full min-h-0 w-full min-w-0", slideClassName)}
+            >
+              {renderSlide(activeItem)}
             </div>
-          ))}
+          ) : null}
         </div>
       </div>
 
