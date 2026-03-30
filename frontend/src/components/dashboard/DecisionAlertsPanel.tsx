@@ -1,5 +1,6 @@
-import type { DashboardSnapshot } from "@ecovision/shared";
+import type { DashboardSnapshot, SeverityFilter } from "@ecovision/shared";
 import { BellRing, Copy, Mail, MessageSquareWarning, RadioTower, Siren } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { buildDecisionAlerts } from "@/lib/dashboard";
@@ -8,7 +9,10 @@ import { cn, riskBadgeClasses } from "@/lib/utils";
 interface DecisionAlertsPanelProps {
   snapshot: DashboardSnapshot;
   timelineIndex: number;
+  severityFilter?: SeverityFilter;
 }
+
+type AlertSort = "severity" | "location" | "confidence";
 
 const channelMeta = {
   email: {
@@ -29,9 +33,41 @@ const channelMeta = {
   }
 } as const;
 
-export const DecisionAlertsPanel = ({ snapshot, timelineIndex }: DecisionAlertsPanelProps) => {
-  const alerts = buildDecisionAlerts(snapshot, timelineIndex);
+const sortOptions: Array<{ id: AlertSort; label: string }> = [
+  { id: "severity", label: "Severity" },
+  { id: "location", label: "Location" },
+  { id: "confidence", label: "Confidence" }
+];
+
+const severityRank = { low: 0, moderate: 1, high: 2, critical: 3 } as const;
+
+export const DecisionAlertsPanel = ({
+  snapshot,
+  timelineIndex,
+  severityFilter = "all"
+}: DecisionAlertsPanelProps) => {
+  const [sortBy, setSortBy] = useState<AlertSort>("severity");
+  const alerts = buildDecisionAlerts(snapshot, timelineIndex, severityFilter);
   const criticalCount = alerts.filter((alert) => alert.riskLevel === "critical").length;
+
+  const sortedAlerts = useMemo(() => {
+    const nextAlerts = [...alerts];
+
+    nextAlerts.sort((left, right) => {
+      if (sortBy === "location") {
+        return left.city.localeCompare(right.city);
+      }
+
+      if (sortBy === "confidence") {
+        return (right.confidence ?? 0) - (left.confidence ?? 0);
+      }
+
+      const severityDelta = severityRank[right.riskLevel] - severityRank[left.riskLevel];
+      return severityDelta !== 0 ? severityDelta : left.city.localeCompare(right.city);
+    });
+
+    return nextAlerts;
+  }, [alerts, sortBy]);
 
   const handleCopy = async (value: string) => {
     if (!navigator.clipboard) {
@@ -44,7 +80,7 @@ export const DecisionAlertsPanel = ({ snapshot, timelineIndex }: DecisionAlertsP
   return (
     <GlassPanel
       title="Decision Alerts"
-      subtitle="Suggested escalation paths for decision makers, field leads, and response coordinators."
+      subtitle="Forecast-based warning workflows, red signals, and recommended outreach paths for decision makers."
       rightSlot={
         <div
           className={cn(
@@ -58,10 +94,25 @@ export const DecisionAlertsPanel = ({ snapshot, timelineIndex }: DecisionAlertsP
           {criticalCount > 0 ? `${criticalCount} critical` : "Digest ready"}
         </div>
       }
-      contentClassName="space-y-3"
+      contentClassName="space-y-4"
     >
-      {alerts.length ? (
-        alerts.map((alert) => (
+      <div className="flex flex-wrap gap-2">
+        {sortOptions.map((option) => (
+          <button
+            key={option.id}
+            onClick={() => setSortBy(option.id)}
+            className={cn(
+              "rounded-2xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] transition",
+              sortBy === option.id ? "bg-white text-slate-950" : "border border-white/10 bg-white/5 text-slate-300"
+            )}
+          >
+            Sort by {option.label}
+          </button>
+        ))}
+      </div>
+
+      {sortedAlerts.length ? (
+        sortedAlerts.map((alert) => (
           <article
             key={alert.id}
             className={cn(
@@ -104,7 +155,12 @@ export const DecisionAlertsPanel = ({ snapshot, timelineIndex }: DecisionAlertsP
             <div className="mt-3 rounded-2xl border border-white/8 bg-slate-950/45 px-3 py-3">
               <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">Decision Recipients</p>
               <p className="mt-2 text-sm text-slate-200">{alert.targetRoles.join(" / ")}</p>
-              <p className="mt-2 text-xs uppercase tracking-[0.18em] text-rose-200">{alert.escalationWindow}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <p className="text-xs uppercase tracking-[0.18em] text-rose-200">{alert.escalationWindow}</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-cyan-100">
+                  Confidence {alert.confidence?.toFixed(0) ?? "N/A"}%
+                </p>
+              </div>
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">
@@ -129,7 +185,7 @@ export const DecisionAlertsPanel = ({ snapshot, timelineIndex }: DecisionAlertsP
         ))
       ) : (
         <div className="rounded-[24px] border border-emerald-400/20 bg-emerald-500/8 px-4 py-4 text-sm text-emerald-100">
-          No urgent alerts in the current timeline slice. Keep decision makers on the daily email digest and monitor for new threshold crossings.
+          No urgent alerts in the current filter context. Keep decision makers on the daily digest and monitor forecast confidence for new threshold crossings.
         </div>
       )}
     </GlassPanel>

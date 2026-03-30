@@ -26,6 +26,7 @@ const metricLabel: Record<ClimateMetric, string> = {
   drought: "drought",
   heat: "heat",
   ndvi: "vegetation resilience",
+  soil_moisture: "soil moisture resilience",
   satellite: "satellite intelligence"
 };
 
@@ -66,10 +67,10 @@ const buildFallbackText = (
     }
 
     if (lower.includes("policy") || lower.includes("brief")) {
-      return `موجز سياسات ${city.city}: مستوى الخطر الحالي هو ${city.riskLevel}. قيمة SPI الحالية ${point.spi?.toFixed(1) ?? "غير متوفرة"} وNDVI ${point.ndvi?.toFixed(2) ?? "غير متوفر"} وحرارة السطح ${point.lst?.toFixed(1) ?? "غير متوفرة"} درجة مئوية. التوصية الأساسية هي ${city.policyNote}`;
+      return `موجز سياسات ${city.city}: مستوى الخطر الحالي هو ${city.riskLevel}. قيمة SPI الحالية ${point.spi?.toFixed(1) ?? "غير متوفرة"} وNDVI ${point.ndvi?.toFixed(2) ?? "غير متوفر"} وحرارة السطح ${point.lst?.toFixed(1) ?? "غير متوفرة"} درجة مئوية ورطوبة التربة ${point.soilMoisture?.toFixed(2) ?? "غير متوفرة"}. التوصية الأساسية هي ${city.policyNote}`;
     }
 
-    return `تحليل ${city.city}: الخطر الحالي ${city.riskLevel} مع ${metricLabel[metric]} كأهم محور متابعة. قيمة SPI الحالية ${point.spi?.toFixed(1) ?? "غير متوفرة"} وNDVI ${point.ndvi?.toFixed(2) ?? "غير متوفر"} وحرارة السطح ${point.lst?.toFixed(1) ?? "غير متوفرة"} درجة مئوية. ${city.summaryText}`;
+    return `تحليل ${city.city}: الخطر الحالي ${city.riskLevel} مع ${metricLabel[metric]} كأهم محور متابعة. قيمة SPI الحالية ${point.spi?.toFixed(1) ?? "غير متوفرة"} وNDVI ${point.ndvi?.toFixed(2) ?? "غير متوفر"} وحرارة السطح ${point.lst?.toFixed(1) ?? "غير متوفرة"} درجة مئوية ورطوبة التربة ${point.soilMoisture?.toFixed(2) ?? "غير متوفرة"}. ${city.summaryText}`;
   }
 
   if (lower.includes("ghaf") || lower.includes("tree") || lower.includes("simulate")) {
@@ -77,10 +78,10 @@ const buildFallbackText = (
   }
 
   if (lower.includes("policy") || lower.includes("brief")) {
-    return `${city.city} policy brief: current risk is ${city.riskLevel}. SPI is ${point.spi?.toFixed(1) ?? "N/A"}, NDVI is ${point.ndvi?.toFixed(2) ?? "N/A"}, and land-surface temperature is ${point.lst?.toFixed(1) ?? "N/A"}°C. Recommended action: ${city.policyNote}`;
+    return `${city.city} policy brief: current risk is ${city.riskLevel}. SPI is ${point.spi?.toFixed(1) ?? "N/A"}, NDVI is ${point.ndvi?.toFixed(2) ?? "N/A"}, land-surface temperature is ${point.lst?.toFixed(1) ?? "N/A"}°C, and soil moisture is ${point.soilMoisture?.toFixed(2) ?? "N/A"}. Recommended action: ${city.policyNote}`;
   }
 
-  return `${city.city} is currently operating at a ${city.riskLevel} climate-risk posture. The active ${metricLabel[metric]} signal shows SPI at ${point.spi?.toFixed(1) ?? "N/A"}, NDVI at ${point.ndvi?.toFixed(2) ?? "N/A"}, land-surface temperature at ${point.lst?.toFixed(1) ?? "N/A"}°C, and forecast accuracy near ${point.forecastAccuracy?.toFixed(0) ?? "N/A"}%. ${city.summaryText}`;
+  return `${city.city} is currently operating at a ${city.riskLevel} climate-risk posture. The active ${metricLabel[metric]} signal shows SPI at ${point.spi?.toFixed(1) ?? "N/A"}, NDVI at ${point.ndvi?.toFixed(2) ?? "N/A"}, land-surface temperature at ${point.lst?.toFixed(1) ?? "N/A"}°C, soil moisture at ${point.soilMoisture?.toFixed(2) ?? "N/A"}, and forecast accuracy near ${point.forecastAccuracy?.toFixed(0) ?? "N/A"}%. ${city.summaryText}`;
 };
 
 const buildPrompt = (
@@ -105,11 +106,14 @@ const buildPrompt = (
     `Current SPI: ${point.spi ?? "N/A"}`,
     `Current NDVI: ${point.ndvi ?? "N/A"}`,
     `Current LST: ${point.lst ?? "N/A"}`,
+    `Current soil moisture: ${point.soilMoisture ?? "N/A"}`,
     `Current forecast: ${point.forecast ?? "N/A"}`,
     `Forecast accuracy: ${point.forecastAccuracy ?? "N/A"}`,
     `Risk level: ${city.riskLevel}`,
     `Policy note: ${city.policyNote}`,
     `City summary: ${city.summaryText}`,
+    `Dominant model features: ${city.featureInfluence.map((entry) => `${entry.feature} ${Math.round(entry.weight * 100)}%`).join(", ")}`,
+    `Forecast model: ${snapshot.analytics.model.name}`,
     `User question: ${question}`,
     "If the question asks for a policy brief, deliver a short policy memo. If it asks for a simulation, provide an estimated directional outcome with explicit uncertainty."
   ].join("\n");

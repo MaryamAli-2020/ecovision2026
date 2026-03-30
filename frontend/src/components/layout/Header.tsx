@@ -6,12 +6,23 @@ interface HeaderProps {
   mode: "demo" | "live";
   healthReady: boolean;
   criticalSignals: number;
+  sourceCount: number;
+  modelLabel: string;
   onOpenConnect: () => void;
   onSwitchDemo: () => void;
   onSwitchLive: () => void;
 }
 
-export const Header = ({ mode, healthReady, criticalSignals, onOpenConnect, onSwitchDemo, onSwitchLive }: HeaderProps) => (
+export const Header = ({
+  mode,
+  healthReady,
+  criticalSignals,
+  sourceCount,
+  modelLabel,
+  onOpenConnect,
+  onSwitchDemo,
+  onSwitchLive
+}: HeaderProps) => (
   <header className="sticky top-0 z-30 border-b border-white/8 bg-slate-950/50 backdrop-blur-2xl">
     <div className="mx-auto flex max-w-[1600px] flex-col gap-4 px-5 py-4 lg:px-6">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -31,7 +42,7 @@ export const Header = ({ mode, healthReady, criticalSignals, onOpenConnect, onSw
                 {mode === "live" ? "Live Data" : "Demo Mode"}
               </span>
             </div>
-            <p className="mt-1 max-w-2xl text-sm text-slate-400">
+            <p className="mt-1 max-w-3xl text-sm text-slate-400">
               Multimodal AI & Generative Visual Analytics for Autonomous Climate Resilience
             </p>
           </div>
@@ -78,15 +89,21 @@ export const Header = ({ mode, healthReady, criticalSignals, onOpenConnect, onSw
         </div>
       </div>
 
-      <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto]">
+      <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto_auto]">
         <div className="flex items-center gap-3 rounded-[24px] border border-white/8 bg-white/5 px-4 py-3">
           <Sparkles className="h-4 w-4 text-cyan-200" />
           <div>
-            <p className="text-sm font-semibold text-white">Ask AI or connect climate data</p>
+            <p className="text-sm font-semibold text-white">Ask AI, inspect MSTT forecasts, or connect climate data</p>
             <p className="text-xs text-slate-400">
-              Demo-safe, bilingual, and grounded in the currently selected UAE city, timeline, and climate layer.
+              Synchronized across remote sensing sources, active Emirate filters, archive windows, and decision-support workflows.
             </p>
           </div>
+        </div>
+        <div className="rounded-[24px] border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300">
+          {sourceCount} remote feeds
+        </div>
+        <div className="rounded-[24px] border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300">
+          {modelLabel}
         </div>
       </div>
     </div>

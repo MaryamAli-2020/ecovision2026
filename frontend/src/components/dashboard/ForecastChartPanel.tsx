@@ -31,20 +31,26 @@ export const ForecastChartPanel = ({
   const horizonLabel = data[data.length - 1]?.label;
 
   return (
-    <GlassPanel title={`SPI Forecast - ${city.city} (MSTT Model)`} subtitle="Observed SPI, model fit, and forward prediction horizon">
+    <GlassPanel
+      title={`SPI Forecast - ${city.emirate} (MSTT)`}
+      subtitle="Observed SPI, model fit, future forecast, and confidence envelope"
+    >
       <div className="mb-4 flex flex-wrap gap-2">
         <span className="rounded-full border border-rose-400/20 bg-rose-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-100">
           Actual observed
         </span>
         <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-100">
-          Model forecast
+          Model fit
         </span>
         <span className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-100">
           Future forecast
         </span>
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-300">
+          Confidence interval
+        </span>
       </div>
 
-      <div className="h-[240px]">
+      <div className="h-[260px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
             <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
@@ -58,12 +64,14 @@ export const ForecastChartPanel = ({
 
                 const labelMap: Record<string, string> = {
                   actualObserved: "Actual observed",
-                  forecastObserved: "Model forecast",
-                  futureForecast: "Future forecast"
+                  forecastObserved: "Model fit",
+                  futureForecast: "Future forecast",
+                  lowerBound: "Lower bound",
+                  upperBound: "Upper bound"
                 };
 
                 const numericValue = typeof value === "number" ? value : Number(value);
-                return [Number.isFinite(numericValue) ? numericValue.toFixed(1) : String(value), labelMap[name] ?? name];
+                return [Number.isFinite(numericValue) ? numericValue.toFixed(2) : String(value), labelMap[name] ?? name];
               }}
               contentStyle={{
                 background: "rgba(15,23,42,0.96)",
@@ -80,6 +88,22 @@ export const ForecastChartPanel = ({
               stroke="rgba(34,211,238,0.6)"
               strokeDasharray="3 6"
               label={{ value: "Today", fill: "#67e8f9", fontSize: 11, position: "top" }}
+            />
+            <Line
+              type="monotone"
+              dataKey="lowerBound"
+              stroke="rgba(226,232,240,0.45)"
+              strokeWidth={1.5}
+              dot={false}
+              connectNulls={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="upperBound"
+              stroke="rgba(226,232,240,0.45)"
+              strokeWidth={1.5}
+              dot={false}
+              connectNulls={false}
             />
             <Line
               type="monotone"

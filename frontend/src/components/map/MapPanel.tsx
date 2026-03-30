@@ -1,9 +1,15 @@
-import type { ClimateMetric, DashboardSnapshot } from "@ecovision/shared";
+import type { ClimateMetric, DashboardSnapshot, SeverityFilter } from "@ecovision/shared";
 import maplibregl from "maplibre-gl";
-import { Layers3, MapPinned, Satellite, ThermometerSun, Trees } from "lucide-react";
+import { Droplets, Layers3, MapPinned, Satellite, ThermometerSun, Trees } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 
-import { buildForecastSummary, getMapMetricValue, getSelectedCity, getTimelinePoint } from "@/lib/dashboard";
+import {
+  buildForecastSummary,
+  getMapMetricValue,
+  getSelectedCity,
+  getTimelinePoint,
+  isRiskVisible
+} from "@/lib/dashboard";
 import { cn, formatMonth } from "@/lib/utils";
 
 interface MapPanelProps {
@@ -11,6 +17,7 @@ interface MapPanelProps {
   activeMetric: ClimateMetric;
   selectedCityId: string;
   timelineIndex: number;
+  severityFilter: SeverityFilter;
   onMetricChange: (metric: ClimateMetric) => void;
   onCitySelect: (cityId: string) => void;
   onTimelineChange: (index: number) => void;
@@ -81,9 +88,16 @@ const metricConfig: Record<
   ndvi: {
     label: "NDVI",
     icon: Trees,
-    min: 0.2,
+    min: 0.18,
     max: 0.45,
     colors: ["#0f766e", "#14b8a6", "#bbf7d0"]
+  },
+  soil_moisture: {
+    label: "Soil Moisture",
+    icon: Droplets,
+    min: 0,
+    max: 1,
+    colors: ["#38bdf8", "#0ea5e9", "#0369a1"]
   },
   satellite: {
     label: "Satellite",
@@ -97,12 +111,14 @@ const metricConfig: Record<
 const buildCityFeatureCollection = (
   snapshot: DashboardSnapshot,
   timelineIndex: number,
-  activeMetric: ClimateMetric
+  activeMetric: ClimateMetric,
+  severityFilter: SeverityFilter
 ): maplibregl.GeoJSONSourceSpecification["data"] => ({
   type: "FeatureCollection",
   features: snapshot.cities.map((city) => {
     const point = getTimelinePoint(city, timelineIndex);
     const intensity = getMapMetricValue(city, timelineIndex, activeMetric);
+    const visible = isRiskVisible(point.riskLevel, severityFilter) ? 1 : 0;
 
     return {
       type: "Feature",
@@ -113,13 +129,16 @@ const buildCityFeatureCollection = (
       properties: {
         id: city.id,
         city: city.city,
+        emirate: city.emirate,
         region: city.region,
         spi: point.spi ?? "N/A",
         ndvi: point.ndvi ?? "N/A",
         lst: point.lst ?? "N/A",
+        soilMoisture: point.soilMoisture ?? "N/A",
         forecast: point.forecast ?? "N/A",
         riskLevel: point.riskLevel,
-        intensity
+        intensity,
+        visible
       }
     };
   })
@@ -145,6 +164,7 @@ export const MapPanel = ({
   activeMetric,
   selectedCityId,
   timelineIndex,
+  severityFilter,
   onMetricChange,
   onCitySelect,
   onTimelineChange
@@ -159,8 +179,8 @@ export const MapPanel = ({
   const selectedIsCritical = selectedPoint.riskLevel === "critical";
 
   const features = useMemo(
-    () => buildCityFeatureCollection(snapshot, timelineIndex, activeMetric),
-    [activeMetric, snapshot, timelineIndex]
+    () => buildCityFeatureCollection(snapshot, timelineIndex, activeMetric, severityFilter),
+    [activeMetric, severityFilter, snapshot, timelineIndex]
   );
 
   useEffect(() => {
@@ -171,9 +191,9 @@ export const MapPanel = ({
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: createBaseStyle(),
-      center: [54.6, 24.7],
-      zoom: 6,
-      minZoom: 5.2,
+      center: [55.2, 25.1],
+      zoom: 6.3,
+      minZoom: 5.3,
       maxZoom: 12.5
     });
 
@@ -191,7 +211,7 @@ export const MapPanel = ({
         source: "cities",
         paint: {
           "circle-color": colorExpressionForMetric(activeMetric),
-          "circle-opacity": 0.28,
+          "circle-opacity": ["case", ["==", ["get", "visible"], 1], 0.28, 0.08],
           "circle-radius": [
             "interpolate",
             ["linear"],
@@ -214,6 +234,7 @@ export const MapPanel = ({
         paint: {
           "circle-color": colorExpressionForMetric(activeMetric),
           "circle-radius": 6.5,
+          "circle-opacity": ["case", ["==", ["get", "visible"], 1], 1, 0.28],
           "circle-stroke-width": 1.5,
           "circle-stroke-color": "#e2e8f0"
         }
@@ -283,10 +304,11 @@ export const MapPanel = ({
         popupRef.current
           ?.setLngLat(coordinates)
           .setHTML(`
-            <div style="min-width: 180px">
-              <div style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#67e8f9">City Node</div>
-              <div style="margin-top:6px;font-size:18px;font-weight:700">${feature.properties.city}</div>
-              <div style="margin-top:6px;font-size:13px;color:#cbd5e1">SPI ${formatPopupValue(feature.properties.spi, 1)} | NDVI ${formatPopupValue(feature.properties.ndvi, 2)} | LST ${formatPopupValue(feature.properties.lst, 1)}°C</div>
+            <div style="min-width: 200px">
+              <div style="font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#67e8f9">Emirate Node</div>
+              <div style="margin-top:6px;font-size:18px;font-weight:700">${feature.properties.emirate}</div>
+              <div style="margin-top:6px;font-size:13px;color:#cbd5e1">SPI ${formatPopupValue(feature.properties.spi, 1)} | NDVI ${formatPopupValue(feature.properties.ndvi, 2)} | LST ${formatPopupValue(feature.properties.lst, 1)} C</div>
+              <div style="margin-top:4px;font-size:13px;color:#cbd5e1">Soil ${formatPopupValue(feature.properties.soilMoisture, 2)} | Forecast ${formatPopupValue(feature.properties.forecast, 1)}</div>
             </div>
           `)
           .addTo(map);
@@ -320,7 +342,7 @@ export const MapPanel = ({
       map.remove();
       mapRef.current = null;
     };
-  }, [activeMetric, onCitySelect, selectedCityId]);
+  }, [activeMetric, onCitySelect, selectedCityId, severityFilter]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -341,12 +363,12 @@ export const MapPanel = ({
 
   useEffect(() => {
     mapRef.current?.resize();
-  }, [snapshot, timelineIndex]);
+  }, [snapshot, timelineIndex, severityFilter]);
 
   return (
-    <section className="relative overflow-hidden rounded-[30px] border border-white/10 bg-slate-950/55 shadow-glow backdrop-blur-xl lg:h-full">
+    <section className="relative overflow-hidden rounded-[30px] border border-white/10 bg-slate-950/55 shadow-glow backdrop-blur-xl xl:h-full">
       <div className="absolute inset-0 bg-dashboard-radial opacity-70" />
-      <div className="relative flex flex-col lg:h-full">
+      <div className="relative flex flex-col xl:h-full">
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/8 px-5 py-4">
           <div>
             <div className="flex items-center gap-2">
@@ -354,7 +376,7 @@ export const MapPanel = ({
               <p className="font-display text-lg text-white">UAE Climate Operations Map</p>
             </div>
             <p className="mt-1 text-sm text-slate-400">
-              Hover for city details, click a node to focus analytics, and toggle layers to compare drought, heat, NDVI, and satellite context.
+              Seven Emirates, synchronized filters, and remote sensing climate layers for operations and forecasting context.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -379,45 +401,45 @@ export const MapPanel = ({
           </div>
         </div>
 
-        <div className="relative min-h-[320px] md:min-h-[390px] lg:min-h-0 lg:flex-1">
-          <div ref={containerRef} className="h-[320px] w-full md:h-[390px] lg:h-full" />
+        <div className="relative min-h-[360px] md:min-h-[420px] xl:min-h-0 xl:flex-1">
+          <div ref={containerRef} className="h-[360px] w-full md:h-[420px] xl:h-full" />
 
           {criticalSignals > 0 ? (
             <div className="pointer-events-none absolute right-3 top-3 rounded-full border border-rose-400/30 bg-rose-500/15 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-100 shadow-ember">
-              Critical signal live - {criticalSignals} hotspot{criticalSignals > 1 ? "s" : ""}
+              Red signal live - {criticalSignals} hotspot{criticalSignals > 1 ? "s" : ""}
             </div>
           ) : null}
 
-          <div className="pointer-events-none absolute left-3 top-3 max-w-[250px] rounded-[18px] border border-white/10 bg-slate-950/88 px-3 py-2.5 backdrop-blur-xl">
+          <div className="pointer-events-none absolute left-3 top-3 max-w-[260px] rounded-[18px] border border-white/10 bg-slate-950/88 px-3 py-2.5 backdrop-blur-xl">
             <p className={cn("text-[11px] uppercase tracking-[0.22em] text-cyan-200", selectedIsCritical && "text-rose-200")}>Intelligence Tip</p>
             <p className="mt-1.5 line-clamp-3 text-[13px] leading-5 text-slate-200">
-              Focus on {selectedCity.city}: {selectedCity.summaryText}
+              Focus on {selectedCity.emirate}: {selectedCity.summaryText}
             </p>
           </div>
 
           <div
             className={cn(
-              "pointer-events-none absolute bottom-3 left-3 max-w-[280px] rounded-[18px] border border-white/10 bg-slate-950/88 px-3 py-2.5 backdrop-blur-xl",
+              "pointer-events-none absolute bottom-3 left-3 max-w-[300px] rounded-[18px] border border-white/10 bg-slate-950/88 px-3 py-2.5 backdrop-blur-xl",
               selectedIsCritical && "border-rose-400/30 bg-rose-950/55 shadow-ember"
             )}
           >
             <p className={cn("text-[11px] uppercase tracking-[0.22em] text-cyan-200", selectedIsCritical && "text-rose-200")}>Forecast Summary</p>
             <p className="mt-1.5 font-display text-[15px] text-white">{summary.headline}</p>
-            <p className="mt-1 line-clamp-2 text-[13px] leading-5 text-slate-300">{summary.detail}</p>
+            <p className="mt-1 line-clamp-3 text-[13px] leading-5 text-slate-300">{summary.detail}</p>
             <p className={cn("mt-1.5 text-[10px] uppercase tracking-[0.18em] text-teal-200", selectedIsCritical && "text-rose-200")}>{summary.signal}</p>
           </div>
         </div>
 
         <div className="border-t border-white/8 px-5 py-3">
-          <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-center">
+          <div className="grid gap-4 xl:grid-cols-[280px_minmax(0,1fr)] xl:items-center">
             <div
               className={cn(
                 "rounded-[24px] border border-white/8 bg-white/5 p-4",
                 selectedIsCritical && "border-rose-400/30 bg-rose-500/8 shadow-ember"
               )}
             >
-              <p className="text-xs uppercase tracking-[0.22em] text-slate-400">Focused City</p>
-              <p className="mt-2 font-display text-2xl text-white">{selectedCity.city}</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-slate-400">Focused Emirate</p>
+              <p className="mt-2 font-display text-2xl text-white">{selectedCity.emirate}</p>
               <p className="mt-1 text-sm text-slate-400">{selectedCity.region}</p>
               {selectedIsCritical ? (
                 <span className="mt-3 inline-flex rounded-full border border-rose-400/30 bg-rose-500/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-100">
@@ -432,7 +454,7 @@ export const MapPanel = ({
                   NDVI {selectedPoint.ndvi?.toFixed(2) ?? "N/A"}
                 </span>
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200">
-                  LST {selectedPoint.lst?.toFixed(1) ?? "N/A"}°C
+                  Soil {selectedPoint.soilMoisture?.toFixed(2) ?? "N/A"}
                 </span>
               </div>
             </div>
@@ -442,7 +464,7 @@ export const MapPanel = ({
                 <div>
                   <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Timeline</p>
                   <p className="mt-1 text-sm text-slate-300">
-                    Progress through monthly climate observations and near-term forecast intervals.
+                    Progress through monthly observations and future forecast intervals for the active control window.
                   </p>
                 </div>
                 <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-100">

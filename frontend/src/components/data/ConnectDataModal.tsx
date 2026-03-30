@@ -228,10 +228,10 @@ export const ConnectDataModal = ({ open, onClose, onUseDemo, onUseSnapshot }: Co
                 <div className="rounded-[26px] border border-white/8 bg-white/5 p-5">
                   <p className="font-display text-xl text-white">Competition-safe demo environment</p>
                   <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
-                    The demo dataset includes Abu Dhabi, Dubai, Sharjah, Al Ain, and Fujairah with realistic coordinates, drought trends, NDVI, land surface temperature, forecast values, assistant samples, and audio briefing text. Use it whenever live ingestion is unavailable.
+                    The demo dataset now includes all seven Emirates with archive history, SPI, NDVI, land surface temperature, soil moisture, MSTT forecast values, assistant samples, and bilingual audio briefing text. Use it whenever live ingestion is unavailable.
                   </p>
                   <div className="mt-4 flex flex-wrap gap-2">
-                    {["UAE city coordinates", "SPI trend", "NDVI trend", "LST trend", "Forecast accuracy", "Arabic/English briefings"].map((item) => (
+                    {["Seven Emirates", "SPI trend", "NDVI trend", "LST trend", "Soil moisture", "MSTT metadata", "Arabic/English briefings"].map((item) => (
                       <span key={item} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
                         {item}
                       </span>

@@ -3,8 +3,11 @@ import type {
   ChatMessage,
   ClimateMetric,
   DashboardSnapshot,
+  DashboardTab,
+  DateRangeKey,
   HealthResponse,
-  Language
+  Language,
+  SeverityFilter
 } from "@ecovision/shared";
 import { createContext, useContext, useMemo, useState } from "react";
 import type { PropsWithChildren } from "react";
@@ -16,6 +19,9 @@ interface DashboardContextValue {
   demoSnapshot: DashboardSnapshot | null;
   liveSnapshot: DashboardSnapshot | null;
   activeMetric: ClimateMetric;
+  activeTab: DashboardTab;
+  selectedDateRange: DateRangeKey;
+  severityFilter: SeverityFilter;
   selectedCityId: string;
   timelineIndex: number;
   language: Language;
@@ -27,6 +33,9 @@ interface DashboardContextValue {
   initializeSnapshot: (snapshot: DashboardSnapshot) => void;
   setHealth: (health: HealthResponse) => void;
   setMetric: (metric: ClimateMetric) => void;
+  setActiveTab: (tab: DashboardTab) => void;
+  setSelectedDateRange: (range: DateRangeKey) => void;
+  setSeverityFilter: (severity: SeverityFilter) => void;
   setSelectedCity: (cityId: string) => void;
   setTimelineIndex: (index: number) => void;
   setLanguage: (language: Language) => void;
@@ -41,13 +50,17 @@ interface DashboardContextValue {
 
 const DashboardContext = createContext<DashboardContextValue | null>(null);
 
-const defaultTimelineIndex = (snapshot: DashboardSnapshot) => Math.min(2, Math.max(snapshot.timeline.length - 1, 0));
+const defaultTimelineIndex = (snapshot: DashboardSnapshot) =>
+  Math.min(2, Math.max(snapshot.timeline.length - 1, 0));
 
 export const DashboardProvider = ({ children }: PropsWithChildren) => {
   const [snapshot, setSnapshot] = useState<DashboardSnapshot | null>(null);
   const [demoSnapshot, setDemoSnapshot] = useState<DashboardSnapshot | null>(null);
   const [liveSnapshot, setLiveSnapshot] = useState<DashboardSnapshot | null>(null);
   const [activeMetric, setActiveMetric] = useState<ClimateMetric>("drought");
+  const [activeTab, setActiveTab] = useState<DashboardTab>("overview");
+  const [selectedDateRange, setSelectedDateRange] = useState<DateRangeKey>("full-archive");
+  const [severityFilter, setSeverityFilter] = useState<SeverityFilter>("all");
   const [selectedCityId, setSelectedCityId] = useState("");
   const [timelineIndex, setTimelineIndexState] = useState(2);
   const [language, setLanguage] = useState<Language>("en");
@@ -81,6 +94,9 @@ export const DashboardProvider = ({ children }: PropsWithChildren) => {
       demoSnapshot,
       liveSnapshot,
       activeMetric,
+      activeTab,
+      selectedDateRange,
+      severityFilter,
       selectedCityId,
       timelineIndex,
       language,
@@ -97,6 +113,9 @@ export const DashboardProvider = ({ children }: PropsWithChildren) => {
       },
       setHealth,
       setMetric: setActiveMetric,
+      setActiveTab,
+      setSelectedDateRange,
+      setSeverityFilter,
       setSelectedCity: setSelectedCityId,
       setTimelineIndex: setTimelineIndexState,
       setLanguage,
@@ -120,6 +139,7 @@ export const DashboardProvider = ({ children }: PropsWithChildren) => {
     }),
     [
       activeMetric,
+      activeTab,
       currentBrief,
       demoSnapshot,
       health,
@@ -129,6 +149,8 @@ export const DashboardProvider = ({ children }: PropsWithChildren) => {
       liveSnapshot,
       messages,
       selectedCityId,
+      selectedDateRange,
+      severityFilter,
       snapshot,
       timelineIndex
     ]

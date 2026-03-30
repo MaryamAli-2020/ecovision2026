@@ -2,17 +2,17 @@ import { useMutation } from "@tanstack/react-query";
 import type { ChatMessage, DashboardSnapshot, Language } from "@ecovision/shared";
 import { useEffect } from "react";
 
-import { AudioBriefingPanel } from "@/components/audio/AudioBriefingPanel";
-import { ClimateAssistantPanel } from "@/components/chat/ClimateAssistantPanel";
 import { ConnectDataModal } from "@/components/data/ConnectDataModal";
-import { DecisionAlertsPanel } from "@/components/dashboard/DecisionAlertsPanel";
-import { ForecastChartPanel } from "@/components/dashboard/ForecastChartPanel";
-import { KpiGrid } from "@/components/dashboard/KpiGrid";
+import { AlertsDecisionTab } from "@/components/dashboard/AlertsDecisionTab";
+import { AIToolsTab } from "@/components/dashboard/AIToolsTab";
+import { DashboardTabs } from "@/components/dashboard/DashboardTabs";
+import { ForecastingAnalyticsTab } from "@/components/dashboard/ForecastingAnalyticsTab";
+import { GlobalFiltersBar } from "@/components/dashboard/GlobalFiltersBar";
+import { OverviewTab } from "@/components/dashboard/OverviewTab";
 import { Header } from "@/components/layout/Header";
-import { MapPanel } from "@/components/map/MapPanel";
+import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
 import { downloadPdfReport, generateAudioBrief, sendChatMessage } from "@/lib/api";
 import { countCriticalSignals, createUserMessage, getSelectedCity } from "@/lib/dashboard";
-import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
 import { useDashboard } from "@/providers/DashboardProvider";
 
 interface DashboardPageProps {
@@ -32,6 +32,9 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
   const dashboard = useDashboard();
   const {
     activeMetric,
+    activeTab,
+    selectedDateRange,
+    severityFilter,
     language,
     selectedCityId,
     timelineIndex,
@@ -48,6 +51,9 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
     activateLiveMode,
     loadLiveSnapshot,
     setMetric,
+    setActiveTab,
+    setSelectedDateRange,
+    setSeverityFilter,
     setSelectedCity,
     setTimelineIndex
   } = dashboard;
@@ -74,16 +80,16 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
     });
   }, [language, selectedCity.id, selectedCity.audioBriefs.ar, selectedCity.audioBriefs.en, setCurrentBrief, snapshot.audioWaveform]);
 
-  const requestBriefing = async (language: Language) => {
+  const requestBriefing = async (briefLanguage: Language) => {
     const response = await audioMutation.mutateAsync({
-      language,
+      language: briefLanguage,
       metric: activeMetric,
       selectedCityId,
       timelineIndex,
       snapshot
     });
     setCurrentBrief(response.briefing);
-    setLanguage(language);
+    setLanguage(briefLanguage);
     return response.briefing;
   };
 
@@ -136,11 +142,13 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
     };
 
   return (
-    <div className="min-h-screen bg-[#07111f] text-white lg:grid lg:h-screen lg:grid-rows-[auto_minmax(0,1fr)]">
+    <div className="min-h-screen bg-[#07111f] text-white">
       <Header
         mode={snapshot.mode}
         healthReady={!isHealthLoading && Boolean(dashboard.health)}
         criticalSignals={criticalSignals}
+        sourceCount={snapshot.analytics.dataSources.length}
+        modelLabel="MSTT Forecasting"
         onOpenConnect={() => setConnectModalOpen(true)}
         onSwitchDemo={handleUseDemo}
         onSwitchLive={() => {
@@ -150,76 +158,91 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
         }}
       />
 
-      <main className="mx-auto grid max-w-[1600px] gap-6 px-5 py-6 lg:min-h-0 lg:w-full lg:grid-cols-[minmax(0,1.58fr)_440px] lg:overflow-hidden lg:px-6">
-        <MapPanel
+      <main className="mx-auto max-w-[1600px] space-y-6 px-5 py-6 lg:px-6">
+        <GlobalFiltersBar
           snapshot={snapshot}
           activeMetric={activeMetric}
           selectedCityId={selectedCityId}
-          timelineIndex={timelineIndex}
+          selectedDateRange={selectedDateRange}
+          severityFilter={severityFilter}
           onMetricChange={setMetric}
-          onCitySelect={setSelectedCity}
-          onTimelineChange={setTimelineIndex}
+          onCityChange={setSelectedCity}
+          onDateRangeChange={setSelectedDateRange}
+          onSeverityChange={setSeverityFilter}
         />
 
-        <aside className="flex min-h-[640px] flex-col overflow-hidden rounded-[30px] border border-white/10 bg-slate-950/45 shadow-glow backdrop-blur-xl lg:h-full lg:min-h-0">
-          <div className="flex-1 space-y-4 overflow-y-auto p-4">
-            {snapshot.warnings.length ? (
-              <div className="rounded-[24px] border border-amber-400/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
-                {snapshot.warnings[0].message}
-              </div>
-            ) : null}
+        <DashboardTabs activeTab={activeTab} onChange={setActiveTab} />
 
-            <DecisionAlertsPanel snapshot={snapshot} timelineIndex={timelineIndex} />
-
-            <KpiGrid
-              snapshot={snapshot}
-              selectedCityId={selectedCityId}
-              timelineIndex={timelineIndex}
-            />
-
-            <ForecastChartPanel
-              snapshot={snapshot}
-              selectedCityId={selectedCityId}
-              timelineIndex={timelineIndex}
-            />
-
-            <AudioBriefingPanel
-              briefing={currentBrief}
-              activeLanguage={language}
-              isSpeaking={isSpeaking}
-              onLanguageChange={(language) => {
-                void requestBriefing(language);
-              }}
-              onPlay={() => {
-                if (!currentBrief.text) {
-                  return;
-                }
-                speak(currentBrief.text, currentBrief.language);
-              }}
-              onStop={stop}
-            />
-
-            <ClimateAssistantPanel
-              snapshot={snapshot}
-              messages={messages}
-              language={language}
-              isSending={chatMutation.isPending}
-              onLanguageChange={setLanguage}
-              onSend={(question) => {
-                void handleSend(question);
-              }}
-              onExampleClick={(question) => {
-                void handleSend(question);
-              }}
-              onDownloadPdf={(message) => {
-                void handleDownloadPdf(message);
-              }}
-              onGenerateAudio={() => {
-                void requestBriefing("ar");
-              }}
-            />
+        {snapshot.warnings.length ? (
+          <div className="rounded-[24px] border border-amber-400/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+            {snapshot.warnings[0].message}
           </div>
-        </aside>
+        ) : null}
+
+        {activeTab === "overview" ? (
+          <OverviewTab
+            snapshot={snapshot}
+            activeMetric={activeMetric}
+            selectedCityId={selectedCityId}
+            timelineIndex={timelineIndex}
+            severityFilter={severityFilter}
+            onMetricChange={setMetric}
+            onCitySelect={setSelectedCity}
+            onTimelineChange={setTimelineIndex}
+          />
+        ) : null}
+
+        {activeTab === "forecasting" ? (
+          <ForecastingAnalyticsTab
+            snapshot={snapshot}
+            selectedCityId={selectedCityId}
+            timelineIndex={timelineIndex}
+            selectedDateRange={selectedDateRange}
+            severityFilter={severityFilter}
+          />
+        ) : null}
+
+        {activeTab === "ai-tools" ? (
+          <AIToolsTab
+            snapshot={snapshot}
+            selectedCityId={selectedCityId}
+            messages={messages}
+            language={language}
+            briefing={currentBrief}
+            isSpeaking={isSpeaking}
+            isSending={chatMutation.isPending}
+            onLanguageChange={setLanguage}
+            onPlay={() => {
+              if (!currentBrief.text) {
+                return;
+              }
+              speak(currentBrief.text, currentBrief.language);
+            }}
+            onStop={stop}
+            onSend={(question) => {
+              void handleSend(question);
+            }}
+            onExampleClick={(question) => {
+              void handleSend(question);
+            }}
+            onDownloadPdf={(message) => {
+              void handleDownloadPdf(message);
+            }}
+            onGenerateAudio={() => {
+              void requestBriefing("ar");
+            }}
+          />
+        ) : null}
+
+        {activeTab === "alerts" ? (
+          <AlertsDecisionTab
+            snapshot={snapshot}
+            timelineIndex={timelineIndex}
+            severityFilter={severityFilter}
+            selectedCityId={selectedCityId}
+            onCitySelect={setSelectedCity}
+          />
+        ) : null}
       </main>
 
       <ConnectDataModal

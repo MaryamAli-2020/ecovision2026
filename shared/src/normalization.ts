@@ -5,9 +5,8 @@ import {
   KNOWN_UAE_CITIES,
   SAMPLE_QUESTIONS
 } from "./constants.js";
-import { createDemoMessages, createDemoSnapshot } from "./demoData.js";
+import { createDemoSnapshot, createSnapshotFromCities } from "./demoData.js";
 import type {
-  ChatMessage,
   CityClimateSeries,
   ClimatePoint,
   DashboardSnapshot,
@@ -16,6 +15,7 @@ import type {
   DatasetProfile,
   ExpectedField,
   FieldMapping,
+  HistoricalClimatePoint,
   NormalizationResult,
   NormalizationWarning,
   NormalizedClimateRecord,
@@ -58,24 +58,41 @@ const toTimestamp = (value: unknown, fallbackIndex: number): string => {
   return DEFAULT_TIMELINE[Math.min(fallbackIndex, DEFAULT_TIMELINE.length - 1)];
 };
 
-const normalizeRisk = (value: unknown, spi: number | null, lst: number | null, ndvi: number | null): RiskLevel => {
+const deriveRiskScore = (
+  spi: number | null,
+  lst: number | null,
+  ndvi: number | null,
+  soilMoisture: number | null
+) =>
+  Math.abs(Math.min(spi ?? 0, 0)) * 28 +
+  Math.max(0, (lst ?? 0) - 39) * 5 +
+  Math.max(0, 0.34 - (ndvi ?? 0)) * 120 +
+  Math.max(0, 0.24 - (soilMoisture ?? 0)) * 180;
+
+const normalizeRisk = (
+  value: unknown,
+  spi: number | null,
+  lst: number | null,
+  ndvi: number | null,
+  soilMoisture: number | null
+): RiskLevel => {
   const normalized = String(value ?? "").toLowerCase().trim();
 
   if (normalized === "low" || normalized === "moderate" || normalized === "high" || normalized === "critical") {
     return normalized;
   }
 
-  const riskScore = Math.abs(Math.min(spi ?? 0, 0)) * 28 + Math.max(0, (lst ?? 0) - 39) * 6 + Math.max(0, 0.34 - (ndvi ?? 0)) * 120;
+  const riskScore = deriveRiskScore(spi, lst, ndvi, soilMoisture);
 
-  if (riskScore >= 60) {
+  if (riskScore >= 74) {
     return "critical";
   }
 
-  if (riskScore >= 43) {
+  if (riskScore >= 56) {
     return "high";
   }
 
-  if (riskScore >= 25) {
+  if (riskScore >= 36) {
     return "moderate";
   }
 
@@ -83,37 +100,37 @@ const normalizeRisk = (value: unknown, spi: number | null, lst: number | null, n
 };
 
 const deriveFallbackNarrative = (city: string, riskLevel: RiskLevel): string => {
-  const base = `${city} environmental indicators were normalized successfully.`;
+  const base = `${city} climate indicators were harmonized successfully.`;
 
   if (riskLevel === "critical") {
-    return `${base} Critical conditions warrant immediate heat and drought mitigation.`;
+    return `${base} Critical drought conditions suggest immediate mitigation and executive escalation.`;
   }
 
   if (riskLevel === "high") {
-    return `${base} Elevated stress suggests near-term cooling and irrigation interventions.`;
+    return `${base} High stress conditions warrant near-term cooling, irrigation, and alerting actions.`;
   }
 
   if (riskLevel === "moderate") {
-    return `${base} Conditions are manageable but should remain under active monitoring.`;
+    return `${base} Conditions remain manageable with active resilience monitoring.`;
   }
 
-  return `${base} Conditions are comparatively stable with room for resilience benchmarking.`;
+  return `${base} Conditions are comparatively stable and suitable for resilience benchmarking.`;
 };
 
 const deriveFallbackPolicy = (city: string, riskLevel: RiskLevel): string => {
   if (riskLevel === "critical") {
-    return `Deploy emergency response measures in ${city}, including rapid irrigation tuning and thermal shielding in exposed corridors.`;
+    return `Trigger drought response escalation in ${city} with irrigation tuning, field-team alerts, and thermal shielding in exposed corridors.`;
   }
 
   if (riskLevel === "high") {
-    return `Accelerate municipal adaptation in ${city} through reflective surfaces, tree planting, and early-warning alerts.`;
+    return `Accelerate municipal adaptation in ${city} through cooling surfaces, targeted greening, and alert threshold reviews.`;
   }
 
   if (riskLevel === "moderate") {
-    return `Maintain active monitoring and targeted greening projects in ${city} to prevent escalation.`;
+    return `Maintain active monitoring and targeted landscape resilience measures in ${city}.`;
   }
 
-  return `Use ${city} as a benchmark site for resilient landscape and cooling strategies.`;
+  return `Use ${city} as a benchmark site for resilient landscape, runoff, and cooling strategies.`;
 };
 
 const getValue = (row: Record<string, unknown>, fieldName?: string): unknown => {
@@ -125,8 +142,8 @@ const getValue = (row: Record<string, unknown>, fieldName?: string): unknown => 
 };
 
 const buildAudioBriefs = (city: string, summaryText: string) => ({
-  en: `${city} climate briefing: ${summaryText} The current operational priority is to stabilize vegetation, suppress surface heat, and improve short-range forecast trust.`,
-  ar: `إحاطة ${city}: ${summaryText} الأولوية التشغيلية الحالية هي تثبيت الغطاء النباتي وخفض حرارة السطح ورفع موثوقية التوقعات قصيرة المدى.`
+  en: `${city} climate briefing: ${summaryText} The operational focus is to stabilize SPI risk, preserve vegetation health, and sustain soil moisture resilience.`,
+  ar: `إحاطة ${city}: ${summaryText} يركز التحديث على استقرار الجفاف، حماية الغطاء النباتي، ودعم رطوبة التربة.`
 });
 
 const computeCompleteness = (records: NormalizedClimateRecord[], mappedFields: FieldMapping): number => {
@@ -135,13 +152,47 @@ const computeCompleteness = (records: NormalizedClimateRecord[], mappedFields: F
   }
 
   const filledCells = records.reduce((sum, record) => {
-    const values = [record.city, record.latitude, record.longitude, record.timestamp, record.spi, record.ndvi, record.lst, record.forecast, record.forecastAccuracy, record.riskLevel, record.policyNote, record.summaryText];
+    const values = [
+      record.city,
+      record.latitude,
+      record.longitude,
+      record.timestamp,
+      record.spi,
+      record.ndvi,
+      record.lst,
+      record.soilMoisture,
+      record.forecast,
+      record.forecastAccuracy,
+      record.riskLevel,
+      record.policyNote,
+      record.summaryText
+    ];
     return sum + values.filter((value) => value !== null && value !== undefined && value !== "").length;
   }, 0);
 
-  const mappedCount = Math.max(Object.keys(mappedFields).length, 8);
+  const mappedCount = Math.max(Object.keys(mappedFields).length, 9);
   return Math.max(0.2, Math.min(1, filledCells / (records.length * mappedCount)));
 };
+
+const buildHistoricalSeries = (records: NormalizedClimateRecord[]): HistoricalClimatePoint[] =>
+  records.map((record, index) => {
+    const predictedSpi = (record.forecast ?? record.spi ?? -0.5) + (index % 4 === 0 ? 0.05 : -0.03);
+    const rainfallDeficit = Math.abs(Math.min(record.spi ?? 0, 0)) * 38 + Math.max(0, 0.26 - (record.soilMoisture ?? 0.22)) * 110;
+    const anomaly = (record.spi ?? 0) * 0.55 + Math.max(0, 0.26 - (record.soilMoisture ?? 0.22)) * 1.2;
+
+    return {
+      timestamp: record.timestamp,
+      spi: record.spi ?? null,
+      ndvi: record.ndvi ?? null,
+      lst: record.lst ?? null,
+      soilMoisture: record.soilMoisture ?? null,
+      predictedSpi,
+      residual: predictedSpi - (record.spi ?? predictedSpi),
+      confidence: record.forecastAccuracy ?? 82,
+      rainfallDeficit,
+      anomaly
+    };
+  });
 
 const buildCitySeries = (records: NormalizedClimateRecord[]): CityClimateSeries[] => {
   const grouped = new Map<string, NormalizedClimateRecord[]>();
@@ -158,21 +209,32 @@ const buildCitySeries = (records: NormalizedClimateRecord[]): CityClimateSeries[
     const latest = cityRecords[cityRecords.length - 1];
     const previous = cityRecords[Math.max(0, cityRecords.length - 2)] ?? latest;
     const lookup = KNOWN_UAE_CITIES[latest.city.toLowerCase()];
-    const timeSeries: ClimatePoint[] = cityRecords.map((record) => ({
-      timestamp: record.timestamp,
-      spi: record.spi,
-      ndvi: record.ndvi,
-      lst: record.lst,
-      forecast: record.forecast,
-      forecastAccuracy: record.forecastAccuracy,
-      riskLevel: record.riskLevel,
-      summaryText: record.summaryText
-    }));
 
-    const riskScore =
-      Math.abs(Math.min(latest.spi ?? 0, 0)) * 28 +
-      Math.max(0, (latest.lst ?? 0) - 39) * 6 +
-      Math.max(0, 0.34 - (latest.ndvi ?? 0)) * 120;
+    const timeSeries: ClimatePoint[] = cityRecords.map((record, index) => {
+      const lowerBound = (record.forecast ?? record.spi ?? 0) - 0.2;
+      const upperBound = (record.forecast ?? record.spi ?? 0) + 0.2;
+      const rainfallDeficit = Math.abs(Math.min(record.spi ?? 0, 0)) * 38 + Math.max(0, 0.26 - (record.soilMoisture ?? 0.22)) * 110;
+      const anomaly = (record.spi ?? 0) * 0.55 + Math.max(0, 0.26 - (record.soilMoisture ?? 0.22)) * 1.2 + index * 0.01;
+
+      return {
+        timestamp: record.timestamp,
+        spi: record.spi,
+        ndvi: record.ndvi,
+        lst: record.lst,
+        soilMoisture: record.soilMoisture,
+        forecast: record.forecast ?? record.spi ?? null,
+        forecastAccuracy: record.forecastAccuracy ?? 82,
+        lowerBound,
+        upperBound,
+        rainfallDeficit,
+        anomaly,
+        riskLevel: record.riskLevel,
+        summaryText: record.summaryText
+      };
+    });
+
+    const historicalSeries = buildHistoricalSeries(cityRecords);
+    const riskScore = deriveRiskScore(latest.spi ?? null, latest.lst ?? null, latest.ndvi ?? null, latest.soilMoisture ?? null);
     const latestSpi = latest.spi ?? null;
     const previousSpi = previous.spi ?? null;
     const trendDirection =
@@ -187,7 +249,8 @@ const buildCitySeries = (records: NormalizedClimateRecord[]): CityClimateSeries[
     return {
       id: latest.city.toLowerCase().replace(/\s+/g, "-"),
       city: latest.city,
-      region: lookup?.region ?? "Imported dataset",
+      emirate: lookup?.emirate ?? latest.city,
+      region: lookup?.region ?? "Imported climate region",
       latitude: latest.latitude,
       longitude: latest.longitude,
       riskLevel: latest.riskLevel,
@@ -197,58 +260,54 @@ const buildCitySeries = (records: NormalizedClimateRecord[]): CityClimateSeries[
       highlights: [
         `Risk ${latest.riskLevel}`,
         `SPI ${latest.spi !== null && latest.spi !== undefined ? latest.spi.toFixed(1) : "N/A"}`,
-        `LST ${latest.lst !== null && latest.lst !== undefined ? latest.lst.toFixed(1) : "N/A"}°C`
+        `Soil ${latest.soilMoisture !== null && latest.soilMoisture !== undefined ? latest.soilMoisture.toFixed(2) : "N/A"}`
+      ],
+      recommendations: [
+        {
+          title: "Imported resilience action",
+          summary: latest.policyNote,
+          domain: "risk-mitigation"
+        }
+      ],
+      featureInfluence: [
+        {
+          feature: "Soil Moisture",
+          weight: 0.32,
+          narrative: "Imported datasets benefit when soil moisture is mapped explicitly for persistence estimation."
+        },
+        {
+          feature: "NDVI",
+          weight: 0.24,
+          narrative: "Vegetation condition remains important for explaining drought severity differences."
+        },
+        {
+          feature: "LST",
+          weight: 0.22,
+          narrative: "Surface heat strengthens the stress signal in high-exposure parcels."
+        },
+        {
+          feature: "Seasonality",
+          weight: 0.22,
+          narrative: "Seasonal timing helps the model contextualize repeated drought cycles."
+        }
       ],
       timeSeries,
+      historicalSeries,
       derived: {
         currentSpi: latest.spi ?? null,
         currentNdvi: latest.ndvi ?? null,
         currentLst: latest.lst ?? null,
+        currentSoilMoisture: latest.soilMoisture ?? null,
         currentForecast: latest.forecast ?? null,
         currentForecastAccuracy: latest.forecastAccuracy ?? null,
         previousSpi: previous.spi ?? null,
+        rainfallDeficit: timeSeries[timeSeries.length - 1]?.rainfallDeficit ?? null,
+        anomaly: timeSeries[timeSeries.length - 1]?.anomaly ?? null,
         riskScore,
         trendDirection
       }
     };
   });
-};
-
-const buildSeedMessages = (cities: CityClimateSeries[]): ChatMessage[] => {
-  if (!cities.length) {
-    return createDemoMessages();
-  }
-
-  const riskiest = [...cities].sort((left, right) => right.derived.riskScore - left.derived.riskScore)[0];
-  const calmest = [...cities].sort((left, right) => left.derived.riskScore - right.derived.riskScore)[0];
-
-  return [
-    {
-      id: "import-seed-1",
-      role: "assistant",
-      language: "en",
-      timestamp: new Date().toISOString(),
-      title: `${riskiest.city} Risk Insight`,
-      content: `${riskiest.city} currently carries the highest modeled climate stress in the imported dataset. Recommended action: ${riskiest.policyNote}`,
-      chips: [
-        `SPI ${riskiest.derived.currentSpi?.toFixed(1) ?? "N/A"}`,
-        `NDVI ${riskiest.derived.currentNdvi?.toFixed(2) ?? "N/A"}`
-      ],
-      actions: [
-        { type: "download-pdf", label: "Download PDF", language: "en" },
-        { type: "audio-brief", label: "Audio Brief (AR)", language: "ar" }
-      ]
-    },
-    {
-      id: "import-seed-2",
-      role: "assistant",
-      language: "en",
-      timestamp: new Date().toISOString(),
-      title: `${calmest.city} Stability Signal`,
-      content: `${calmest.city} is the most stable city in the imported dataset and can be used as a benchmark for resilience playbooks and cooling-performance targets.`,
-      chips: [`Risk ${calmest.riskLevel}`]
-    }
-  ];
 };
 
 export const inferFieldMapping = (fields: string[]): FieldMapping => {
@@ -310,7 +369,7 @@ export const normalizeDataset = (
   if (needsMapping) {
     warnings.push({
       code: "mapping_recommended",
-      message: "Some expected fields were not confidently inferred. You can map fields manually for richer widgets.",
+      message: "Some expected fields were not confidently inferred. Manual mapping can improve the richer forecast and alert widgets.",
       severity: "info"
     });
   }
@@ -322,11 +381,12 @@ export const normalizeDataset = (
     const spi = toNumber(getValue(row, mapping.spi));
     const ndvi = toNumber(getValue(row, mapping.ndvi));
     const lst = toNumber(getValue(row, mapping.lst));
+    const soilMoisture = toNumber(getValue(row, mapping.soil_moisture));
     const forecast = toNumber(getValue(row, mapping.forecast));
     const forecastAccuracy = toNumber(getValue(row, mapping.forecast_accuracy));
     const latitude = toNumber(getValue(row, mapping.latitude)) ?? knownLocation?.latitude ?? 24.35;
     const longitude = toNumber(getValue(row, mapping.longitude)) ?? knownLocation?.longitude ?? 54.9;
-    const riskLevel = normalizeRisk(getValue(row, mapping.risk_level), spi, lst, ndvi);
+    const riskLevel = normalizeRisk(getValue(row, mapping.risk_level), spi, lst, ndvi, soilMoisture);
     const summaryText =
       String(getValue(row, mapping.summary_text) ?? "").trim() || deriveFallbackNarrative(city, riskLevel);
     const policyNote =
@@ -340,6 +400,7 @@ export const normalizeDataset = (
       spi,
       ndvi,
       lst,
+      soilMoisture,
       forecast,
       forecastAccuracy,
       riskLevel,
@@ -381,32 +442,31 @@ export const normalizeDataset = (
     fields: availableFields,
     mappedFields: mapping,
     missingFields,
-    completenessScore: computeCompleteness(normalizedRecords, mapping)
+    completenessScore: computeCompleteness(normalizedRecords, mapping),
+    temporalScale: "Monthly",
+    spatialResolution: "Mixed imported resolution",
+    harmonizedResolution: "1 km target"
   };
 
-  const snapshot: DashboardSnapshot = {
+  const snapshot: DashboardSnapshot = createSnapshotFromCities(cities, {
     mode: options.mode ?? "live",
     sourceType: options.sourceType ?? "upload",
     datasetLabel: profile.datasetName,
     sourceLabel:
       profile.sourceType === "mongo"
-        ? "Live MongoDB ingestion"
+        ? "Live MongoDB climate ingestion"
         : "Uploaded structured climate dataset",
-    generatedAt: new Date().toISOString(),
-    lastUpdated: timeline[timeline.length - 1] ?? new Date().toISOString(),
-    selectedCityId: cities[0].id,
-    timeline: timeline.length ? timeline : DEFAULT_TIMELINE,
-    cities,
-    availableMetrics: ["drought", "heat", "ndvi", "satellite"],
-    sampleQuestions: SAMPLE_QUESTIONS,
-    seedMessages: buildSeedMessages(cities),
-    audioWaveform: createDemoSnapshot().audioWaveform,
     profile,
+    selectedCityId: cities[0]?.id,
     warnings
-  };
+  });
 
   return {
-    snapshot,
+    snapshot: {
+      ...snapshot,
+      lastUpdated: timeline[timeline.length - 1] ?? snapshot.lastUpdated,
+      sampleQuestions: SAMPLE_QUESTIONS
+    },
     previewRows: rows.slice(0, 5),
     availableFields,
     inferredMapping,
