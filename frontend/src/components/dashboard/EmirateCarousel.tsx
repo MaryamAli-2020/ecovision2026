@@ -72,15 +72,15 @@ export const EmirateCarousel = <T extends EmirateCarouselItem>({
           </button>
         </div>
       }
-      contentClassName="flex h-full min-h-0 flex-col gap-3 p-3.5"
+      contentClassName="flex h-full min-h-0 flex-col gap-3 overflow-hidden p-3.5"
     >
-      <div className="min-h-[320px] flex-1 overflow-hidden rounded-[22px] xl:min-h-0">
+      <div className="min-h-[320px] min-w-0 flex-1 overflow-hidden rounded-[22px] xl:min-h-0">
         <div
-          className="flex h-full transition-transform duration-300 ease-out"
+          className="flex h-full min-w-0 transition-transform duration-300 ease-out"
           style={{ transform: `translateX(-${activeIndex * 100}%)` }}
         >
           {items.map((item) => (
-            <div key={item.id} className={cn("flex h-full min-h-0 w-full shrink-0", slideClassName)}>
+            <div key={item.id} className={cn("flex h-full min-h-0 w-full min-w-0 shrink-0", slideClassName)}>
               {renderSlide(item)}
             </div>
           ))}

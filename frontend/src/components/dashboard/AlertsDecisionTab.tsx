@@ -47,9 +47,9 @@ export const AlertsDecisionTab = ({
             const point = getTimelinePoint(city, timelineIndex);
 
             return (
-              <article className="flex h-full min-h-0 flex-col rounded-[22px] border border-white/8 bg-white/5 p-3.5">
+              <article className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-y-auto overflow-x-hidden rounded-[22px] border border-white/8 bg-white/5 p-3.5">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <p className="font-display text-[1.75rem] leading-none text-white">{city.emirate}</p>
                     <p className="mt-1 text-[13px] text-slate-400">{city.region}</p>
                   </div>
@@ -58,8 +58,8 @@ export const AlertsDecisionTab = ({
                   </span>
                 </div>
 
-                <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
-                  <div className="rounded-[18px] border border-white/8 bg-slate-950/45 p-3">
+                <div className="mt-3 grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-2.5">
+                  <div className="min-w-0 rounded-[18px] border border-white/8 bg-slate-950/45 p-3">
                     <div className="flex items-center gap-2 text-slate-400">
                       <TriangleAlert className="h-4 w-4" />
                       <span className="text-[11px] uppercase tracking-[0.18em]">Risk score</span>
@@ -70,7 +70,7 @@ export const AlertsDecisionTab = ({
                     <p className="mt-1 text-[13px] text-slate-300">Confidence {formatPercent(point.forecastAccuracy)}</p>
                   </div>
 
-                  <div className="rounded-[18px] border border-white/8 bg-slate-950/45 p-3">
+                  <div className="min-w-0 rounded-[18px] border border-white/8 bg-slate-950/45 p-3">
                     <div className="flex items-center gap-2 text-slate-400">
                       <Siren className="h-4 w-4" />
                       <span className="text-[11px] uppercase tracking-[0.18em]">Rainfall deficit</span>
@@ -80,24 +80,24 @@ export const AlertsDecisionTab = ({
                   </div>
                 </div>
 
-                <div className="mt-2.5 grid gap-2 sm:grid-cols-3">
-                  <div className="rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                <div className="mt-2.5 grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2">
+                  <div className="min-w-0 rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
                     <span className="text-[11px] uppercase tracking-[0.18em] text-slate-500">SPI</span>
                     <p className="mt-1 text-[15px] text-white">{point.spi?.toFixed(1) ?? "N/A"}</p>
                   </div>
-                  <div className="rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                  <div className="min-w-0 rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
                     <span className="text-[11px] uppercase tracking-[0.18em] text-slate-500">Soil</span>
                     <p className="mt-1 text-[15px] text-white">{point.soilMoisture?.toFixed(2) ?? "N/A"}</p>
                   </div>
-                  <div className="rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
+                  <div className="min-w-0 rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5 text-sm text-slate-200">
                     <span className="text-[11px] uppercase tracking-[0.18em] text-slate-500">LST</span>
                     <p className="mt-1 text-[15px] text-white">{point.lst?.toFixed(1) ?? "N/A"} C</p>
                   </div>
                 </div>
 
-                <div className="mt-2.5 rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5">
+                <div className="mt-2.5 min-w-0 rounded-[18px] border border-white/8 bg-slate-950/45 px-3 py-2.5">
                   <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">Action</p>
-                  <p className="mt-1 line-clamp-2 text-[13px] leading-5 text-slate-300">{city.policyNote}</p>
+                  <p className="mt-1 line-clamp-2 break-words text-[13px] leading-5 text-slate-300">{city.policyNote}</p>
                 </div>
               </article>
             );
