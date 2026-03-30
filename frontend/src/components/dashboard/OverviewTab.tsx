@@ -3,7 +3,7 @@ import { Database, Droplets, Leaf, ThermometerSun } from "lucide-react";
 
 import { KpiGrid } from "@/components/dashboard/KpiGrid";
 import { MapPanel } from "@/components/map/MapPanel";
-import { GlassPanel } from "@/components/ui/GlassPanel";
+import { ExpandablePanel } from "@/components/ui/ExpandablePanel";
 import { buildCurrentConditionRows } from "@/lib/dashboard";
 import { cn, formatPercent } from "@/lib/utils";
 
@@ -31,7 +31,7 @@ export const OverviewTab = ({
   const conditions = buildCurrentConditionRows(snapshot, severityFilter);
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,1.58fr)_390px]">
+    <div className="grid gap-4 xl:h-full xl:min-h-0 xl:grid-cols-[minmax(0,1.58fr)_390px] xl:items-stretch">
       <MapPanel
         snapshot={snapshot}
         activeMetric={activeMetric}
@@ -43,12 +43,13 @@ export const OverviewTab = ({
         onTimelineChange={onTimelineChange}
       />
 
-      <aside className="space-y-4 xl:max-h-[calc(100vh-320px)] xl:overflow-y-auto xl:pr-1">
+      <aside className="space-y-4 xl:flex xl:h-full xl:min-h-0 xl:flex-col xl:overflow-hidden xl:pr-1">
         <KpiGrid snapshot={snapshot} selectedCityId={selectedCityId} timelineIndex={timelineIndex} />
 
-        <GlassPanel
+        <ExpandablePanel
           title="Current Conditions by Emirate"
-          contentClassName="space-y-3"
+          summary={`${conditions.length} emirates`}
+          contentClassName="space-y-3 xl:max-h-[320px] xl:overflow-y-auto xl:pr-1"
         >
           {conditions.map((entry) => (
             <button
@@ -105,11 +106,12 @@ export const OverviewTab = ({
               </div>
             </button>
           ))}
-        </GlassPanel>
+        </ExpandablePanel>
 
-        <GlassPanel
+        <ExpandablePanel
           title="Remote Sensing Sources"
-          contentClassName="space-y-3"
+          summary={`${snapshot.analytics.dataSources.length} feeds`}
+          contentClassName="space-y-3 xl:max-h-[280px] xl:overflow-y-auto xl:pr-1"
         >
           {snapshot.analytics.dataSources.map((source) => (
             <article key={source.id} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
@@ -136,7 +138,7 @@ export const OverviewTab = ({
               </div>
             </article>
           ))}
-        </GlassPanel>
+        </ExpandablePanel>
       </aside>
     </div>
   );

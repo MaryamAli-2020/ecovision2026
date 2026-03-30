@@ -4,10 +4,11 @@ import type {
   DashboardSnapshot,
   Language
 } from "@ecovision/shared";
-import { FileText, Lightbulb, Volume2 } from "lucide-react";
+import { FileText, Lightbulb } from "lucide-react";
 
 import { AudioBriefingPanel } from "@/components/audio/AudioBriefingPanel";
 import { ClimateAssistantPanel } from "@/components/chat/ClimateAssistantPanel";
+import { ExpandablePanel } from "@/components/ui/ExpandablePanel";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { getSelectedCity } from "@/lib/dashboard";
 
@@ -47,7 +48,7 @@ export const AIToolsTab = ({
   const selectedCity = getSelectedCity(snapshot, selectedCityId);
 
   return (
-    <div className="grid gap-4 xl:min-h-0 xl:grid-cols-[360px_minmax(0,1fr)]">
+    <div className="grid gap-4 xl:h-full xl:min-h-0 xl:grid-cols-[360px_minmax(0,1fr)]">
       <div className="space-y-4 xl:min-h-0 xl:overflow-y-auto xl:pr-1">
         <AudioBriefingPanel
           briefing={briefing}
@@ -58,7 +59,12 @@ export const AIToolsTab = ({
           onStop={onStop}
         />
 
-        <div className="grid gap-4 xl:grid-cols-1">
+        <ExpandablePanel
+          title="AI Notes"
+          summary={`${selectedCity.recommendations.length} recommendations`}
+          badge={<FileText className="h-4 w-4 text-cyan-200" />}
+          contentClassName="space-y-4"
+        >
           <GlassPanel
             title="AI-Generated Climate Summary"
             rightSlot={<FileText className="h-4 w-4 text-cyan-200" />}
@@ -96,7 +102,7 @@ export const AIToolsTab = ({
               Supported tasks: drought risk explanation, future SPI forecast interpretation, Arabic policy briefs, and mitigation guidance.
             </div>
           </GlassPanel>
-        </div>
+        </ExpandablePanel>
       </div>
 
       <div className="min-h-0 xl:overflow-y-auto xl:pr-1">

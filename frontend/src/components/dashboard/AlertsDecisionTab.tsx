@@ -2,6 +2,7 @@ import type { DashboardSnapshot, SeverityFilter } from "@ecovision/shared";
 import { BellRing, MailCheck, ShieldAlert, Siren } from "lucide-react";
 
 import { DecisionAlertsPanel } from "@/components/dashboard/DecisionAlertsPanel";
+import { ExpandablePanel } from "@/components/ui/ExpandablePanel";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { buildCurrentConditionRows } from "@/lib/dashboard";
 import { cn, formatPercent, riskBadgeClasses } from "@/lib/utils";
@@ -25,19 +26,20 @@ export const AlertsDecisionTab = ({
   const criticalCount = rows.filter((row) => row.riskLevel === "critical").length;
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,1.08fr)_360px]">
+    <div className="grid gap-4 xl:h-full xl:min-h-0 xl:grid-cols-[minmax(0,1.08fr)_360px]">
       <DecisionAlertsPanel snapshot={snapshot} timelineIndex={timelineIndex} severityFilter={severityFilter} />
 
-      <div className="space-y-4 xl:max-h-[calc(100vh-320px)] xl:overflow-y-auto xl:pr-1">
-        <GlassPanel
+      <div className="space-y-4 xl:flex xl:h-full xl:min-h-0 xl:flex-col xl:overflow-y-auto xl:pr-1">
+        <ExpandablePanel
           title="Risk Scoring by Emirate"
-          rightSlot={
+          summary={`${rows.length} regions`}
+          badge={
             <div className="inline-flex items-center gap-2 rounded-full border border-rose-400/20 bg-rose-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-rose-100">
               <Siren className="h-3.5 w-3.5" />
               {criticalCount} red signal{criticalCount === 1 ? "" : "s"}
             </div>
           }
-          contentClassName="space-y-3"
+          contentClassName="space-y-3 xl:max-h-[360px] xl:overflow-y-auto xl:pr-1"
         >
           {rows.map((row) => (
             <button
@@ -66,9 +68,9 @@ export const AlertsDecisionTab = ({
               </div>
             </button>
           ))}
-        </GlassPanel>
+        </ExpandablePanel>
 
-        <GlassPanel title="Decision Support Playbook" contentClassName="space-y-3">
+        <ExpandablePanel title="Decision Support Playbook" summary="3 escalation paths" contentClassName="space-y-3">
           {[
             {
               title: "Immediate red signal",
@@ -103,7 +105,7 @@ export const AlertsDecisionTab = ({
               </div>
             );
           })}
-        </GlassPanel>
+        </ExpandablePanel>
       </div>
     </div>
   );

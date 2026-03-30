@@ -366,10 +366,10 @@ export const MapPanel = ({
   }, [snapshot, timelineIndex, severityFilter]);
 
   return (
-    <section className="relative overflow-hidden rounded-[30px] border border-white/10 bg-slate-950/55 shadow-glow backdrop-blur-xl xl:h-full">
+    <section className="relative self-start overflow-hidden rounded-[30px] border border-white/10 bg-slate-950/55 shadow-glow backdrop-blur-xl xl:h-full xl:min-h-0">
       <div className="absolute inset-0 bg-dashboard-radial opacity-70" />
       <div className="relative flex flex-col xl:h-full">
-        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/8 px-5 py-4">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/8 px-4 py-3.5">
           <div>
             <div className="flex items-center gap-2">
               <MapPinned className="h-4 w-4 text-cyan-200" />
@@ -398,8 +398,8 @@ export const MapPanel = ({
           </div>
         </div>
 
-        <div className="relative min-h-[360px] md:min-h-[420px] xl:min-h-0 xl:flex-1">
-          <div ref={containerRef} className="h-[360px] w-full md:h-[420px] xl:h-full" />
+        <div className="relative min-h-[340px] md:min-h-[400px] xl:min-h-0 xl:flex-1">
+          <div ref={containerRef} className="h-[340px] w-full md:h-[400px] xl:h-full" />
 
           {criticalSignals > 0 ? (
             <div className="pointer-events-none absolute right-3 top-3 rounded-full border border-rose-400/30 bg-rose-500/15 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-100 shadow-ember">
@@ -427,11 +427,11 @@ export const MapPanel = ({
           </div>
         </div>
 
-        <div className="border-t border-white/8 px-5 py-3">
-          <div className="grid gap-4 xl:grid-cols-[280px_minmax(0,1fr)] xl:items-center">
+        <div className="border-t border-white/8 px-4 py-2.5">
+          <div className="grid gap-3 xl:grid-cols-[250px_minmax(0,1fr)] xl:items-center">
             <div
               className={cn(
-                "rounded-[24px] border border-white/8 bg-white/5 p-4",
+                "rounded-[24px] border border-white/8 bg-white/5 p-3.5",
                 selectedIsCritical && "border-rose-400/30 bg-rose-500/8 shadow-ember"
               )}
             >
@@ -456,7 +456,7 @@ export const MapPanel = ({
               </div>
             </div>
 
-            <div className="rounded-[24px] border border-white/8 bg-white/5 p-4">
+            <div className="rounded-[24px] border border-white/8 bg-white/5 p-3.5">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Timeline</p>
                 <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-100">
@@ -469,7 +469,7 @@ export const MapPanel = ({
                 max={snapshot.timeline.length - 1}
                 value={timelineIndex}
                 onChange={(event) => onTimelineChange(Number(event.target.value))}
-                className="mt-5 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-cyan-300"
+                className="mt-4 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-cyan-300"
               />
               <div className="mt-3 flex justify-between text-[11px] uppercase tracking-[0.18em] text-slate-500">
                 {snapshot.timeline.map((entry, index) => (

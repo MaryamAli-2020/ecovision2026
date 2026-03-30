@@ -93,7 +93,8 @@ export const DecisionAlertsPanel = ({
           {criticalCount > 0 ? `${criticalCount} critical` : "Digest ready"}
         </div>
       }
-      contentClassName="space-y-3"
+      className="xl:h-full xl:min-h-0"
+      contentClassName="space-y-3 xl:max-h-[calc(100vh-360px)] xl:overflow-y-auto xl:pr-1"
     >
       <div className="flex flex-wrap gap-2">
         {sortOptions.map((option) => (

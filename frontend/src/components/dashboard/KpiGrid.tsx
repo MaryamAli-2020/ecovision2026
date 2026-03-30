@@ -27,7 +27,7 @@ export const KpiGrid = ({ snapshot, selectedCityId, timelineIndex }: KpiGridProp
           <div
             key={card.title}
             className={cn(
-              "rounded-[24px] border p-4 shadow-glow",
+              "rounded-[24px] border p-3.5 shadow-glow",
               card.accent === "rose" && "border-rose-400/20 bg-rose-500/8",
               card.accent === "amber" && "border-amber-400/20 bg-amber-500/8 shadow-ember",
               card.accent === "teal" && "border-teal-400/20 bg-teal-500/8",
@@ -37,16 +37,16 @@ export const KpiGrid = ({ snapshot, selectedCityId, timelineIndex }: KpiGridProp
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{card.title}</p>
-                <p className="mt-3 font-display text-3xl text-white">
+                <p className="mt-2.5 font-display text-[1.7rem] leading-none text-white">
                   {formatNumber(card.value, card.unit === "%" ? 0 : card.unit === "" ? 2 : 1)}
-                  <span className="ml-1 text-base font-medium text-slate-300">{card.unit}</span>
+                  <span className="ml-1 text-sm font-medium text-slate-300">{card.unit}</span>
                 </p>
               </div>
               <div className="rounded-full border border-white/10 bg-white/5 p-2">
                 {Icon ? <Icon className="h-4 w-4 text-white" /> : null}
               </div>
             </div>
-            <p className="mt-3 text-sm text-slate-300">{card.note}</p>
+            <p className="mt-2.5 line-clamp-2 text-xs leading-5 text-slate-300">{card.note}</p>
           </div>
         );
       })}

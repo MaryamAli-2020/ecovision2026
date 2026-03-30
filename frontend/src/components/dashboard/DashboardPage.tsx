@@ -13,6 +13,7 @@ import { Header } from "@/components/layout/Header";
 import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
 import { downloadPdfReport, generateAudioBrief, sendChatMessage } from "@/lib/api";
 import { countCriticalSignals, createUserMessage, getSelectedCity } from "@/lib/dashboard";
+import { cn } from "@/lib/utils";
 import { useDashboard } from "@/providers/DashboardProvider";
 
 interface DashboardPageProps {
@@ -156,7 +157,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
         }}
       />
 
-      <main className="mx-auto max-w-[1600px] space-y-3 px-4 py-3 lg:flex lg:min-h-0 lg:w-full lg:flex-1 lg:flex-col lg:overflow-hidden lg:px-6">
+      <main className="mx-auto max-w-[1600px] space-y-2.5 px-4 py-3 lg:flex lg:min-h-0 lg:w-full lg:flex-1 lg:flex-col lg:overflow-hidden lg:px-6">
         <GlobalFiltersBar
           snapshot={snapshot}
           activeMetric={activeMetric}
@@ -177,7 +178,12 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
           </div>
         ) : null}
 
-        <div className="lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-1">
+        <div
+          className={cn(
+            "lg:min-h-0 lg:flex-1 lg:pr-1",
+            activeTab === "overview" ? "lg:overflow-hidden" : "lg:overflow-y-auto"
+          )}
+        >
           {activeTab === "overview" ? (
             <OverviewTab
               snapshot={snapshot}

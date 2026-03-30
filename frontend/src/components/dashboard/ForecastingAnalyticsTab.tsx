@@ -14,6 +14,7 @@ import {
 import { Activity, BarChart3, BrainCircuit, Waves } from "lucide-react";
 
 import { ForecastChartPanel } from "@/components/dashboard/ForecastChartPanel";
+import { ExpandablePanel } from "@/components/ui/ExpandablePanel";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import {
   buildForecastDriverSeries,
@@ -154,7 +155,7 @@ export const ForecastingAnalyticsTab = ({
       </div>
 
       <div className="grid gap-4 xl:grid-cols-12">
-        <div className="space-y-4 xl:col-span-7">
+        <div className="space-y-4 xl:col-span-8">
           <ForecastChartPanel
             snapshot={snapshot}
             selectedCityId={selectedCityId}
@@ -162,11 +163,12 @@ export const ForecastingAnalyticsTab = ({
           />
         </div>
 
-        <GlassPanel
-          className="xl:col-span-5"
+        <ExpandablePanel
+          className="xl:col-span-4 xl:self-start"
           title="Model Insights"
-          rightSlot={<BrainCircuit className="h-4 w-4 text-cyan-200" />}
-          contentClassName="space-y-4"
+          summary={`${selectedCity.featureInfluence.length} drivers`}
+          badge={<BrainCircuit className="h-4 w-4 text-cyan-200" />}
+          contentClassName="space-y-4 xl:max-h-[520px] xl:overflow-y-auto xl:pr-1"
         >
           <div className="space-y-2.5">
             {selectedCity.featureInfluence.map((entry) => (
@@ -210,91 +212,24 @@ export const ForecastingAnalyticsTab = ({
               </div>
             ))}
           </div>
-        </GlassPanel>
+        </ExpandablePanel>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-3">
-        <GlassPanel
-          title="Driver Forecast Signals"
-          rightSlot={<Waves className="h-4 w-4 text-cyan-200" />}
-        >
-          <div className="h-[210px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={drivers} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
-                <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
-                <XAxis dataKey="label" tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
-                <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
-                <Tooltip
-                  contentStyle={{
-                    background: "rgba(15,23,42,0.96)",
-                    border: "1px solid rgba(148,163,184,0.18)",
-                    borderRadius: 18,
-                    color: "#e2e8f0"
-                  }}
-                />
-                <Line type="monotone" dataKey="ndvi" stroke={chartColors[2]} strokeWidth={3} dot={false} />
-                <Line type="monotone" dataKey="lst" stroke={chartColors[3]} strokeWidth={3} dot={false} />
-                <Line type="monotone" dataKey="soilMoisture" stroke={chartColors[0]} strokeWidth={3} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </GlassPanel>
-
-        <GlassPanel
-          title={`Monthly SPI Archive - ${selectedCity.emirate}`}
-          rightSlot={<Activity className="h-4 w-4 text-cyan-200" />}
-        >
-          <div className="h-[210px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={trendData} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
-                <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
-                <XAxis
-                  dataKey="timestamp"
-                  tickFormatter={(value) => new Date(value).getFullYear().toString()}
-                  tick={{ fill: "#94a3b8", fontSize: 11 }}
-                  tickLine={false}
-                  axisLine={false}
-                  minTickGap={24}
-                />
-                <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
-                <Tooltip
-                  labelFormatter={(value) =>
-                    new Date(String(value)).toLocaleDateString("en-US", { month: "short", year: "numeric" })
-                  }
-                  contentStyle={{
-                    background: "rgba(15,23,42,0.96)",
-                    border: "1px solid rgba(148,163,184,0.18)",
-                    borderRadius: 18,
-                    color: "#e2e8f0"
-                  }}
-                />
-                <Line type="monotone" dataKey="spi" stroke={chartColors[1]} strokeWidth={2.7} dot={false} />
-                <Line type="monotone" dataKey="predictedSpi" stroke={chartColors[0]} strokeWidth={2.5} dot={false} strokeDasharray="6 4" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </GlassPanel>
-
-        <GlassPanel title="Seasonal Pattern Matrix">
-          <SeasonalMatrix values={seasonalData} />
-        </GlassPanel>
-      </div>
-
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_360px]">
-        <GlassPanel
-          title="Forecasted Drought Severity Map"
-          rightSlot={<BarChart3 className="h-4 w-4 text-cyan-200" />}
-        >
-          <SpatialForecastHeatmap snapshot={snapshot} severityFilter={severityFilter} />
-        </GlassPanel>
-
-        <div className="space-y-4">
-          <GlassPanel title="Compare Models">
-            <div className="h-[180px]">
+      <ExpandablePanel
+        title="Signal Details"
+        summary="Drivers, archive, seasonality"
+        badge={<Waves className="h-4 w-4 text-cyan-200" />}
+      >
+        <div className="grid gap-4 xl:grid-cols-3">
+          <GlassPanel
+            title="Driver Forecast Signals"
+            rightSlot={<Waves className="h-4 w-4 text-cyan-200" />}
+          >
+            <div className="h-[210px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={modelComparison} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
+                <LineChart data={drivers} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
                   <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
-                  <XAxis dataKey="model" tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="label" tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
                   <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
                   <Tooltip
                     contentStyle={{
@@ -304,47 +239,126 @@ export const ForecastingAnalyticsTab = ({
                       color: "#e2e8f0"
                     }}
                   />
-                  <Bar dataKey="rmse" radius={[8, 8, 0, 0]}>
-                    {modelComparison.map((entry, index) => (
-                      <Cell key={entry.model} fill={chartColors[index] ?? "#22d3ee"} />
-                    ))}
-                  </Bar>
-                </BarChart>
+                  <Line type="monotone" dataKey="ndvi" stroke={chartColors[2]} strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="lst" stroke={chartColors[3]} strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="soilMoisture" stroke={chartColors[0]} strokeWidth={3} dot={false} />
+                </LineChart>
               </ResponsiveContainer>
-            </div>
-            <div className="mt-3 space-y-2.5">
-              {modelComparison.map((entry) => (
-                <div key={entry.model} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="font-display text-base text-white">{entry.model}</p>
-                    <span className="text-xs text-slate-400">R2 {entry.r2.toFixed(2)}</span>
-                  </div>
-                  <p className="mt-1.5 text-sm text-slate-300">{entry.note}</p>
-                </div>
-              ))}
             </div>
           </GlassPanel>
 
-          <GlassPanel title="Regional Performance">
-            <div className="space-y-2.5 xl:max-h-[360px] xl:overflow-y-auto xl:pr-1">
-              {regionalPerformance.map((entry) => (
-                <div key={entry.emirateId} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="font-display text-base text-white">{entry.emirate}</p>
-                    <span className="text-xs text-slate-400">{formatPercent(entry.confidence)}</span>
-                  </div>
-                  <div className="mt-2.5 grid gap-2 text-sm text-slate-300 sm:grid-cols-3">
-                    <p>RMSE {entry.rmse.toFixed(2)}</p>
-                    <p>MAE {entry.mae.toFixed(2)}</p>
-                    <p>R2 {entry.r2.toFixed(2)}</p>
-                  </div>
-                  <p className="mt-1.5 text-xs leading-5 text-slate-400">{entry.note}</p>
-                </div>
-              ))}
+          <GlassPanel
+            title={`Monthly SPI Archive - ${selectedCity.emirate}`}
+            rightSlot={<Activity className="h-4 w-4 text-cyan-200" />}
+          >
+            <div className="h-[210px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={trendData} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
+                  <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
+                  <XAxis
+                    dataKey="timestamp"
+                    tickFormatter={(value) => new Date(value).getFullYear().toString()}
+                    tick={{ fill: "#94a3b8", fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                    minTickGap={24}
+                  />
+                  <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
+                  <Tooltip
+                    labelFormatter={(value) =>
+                      new Date(String(value)).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+                    }
+                    contentStyle={{
+                      background: "rgba(15,23,42,0.96)",
+                      border: "1px solid rgba(148,163,184,0.18)",
+                      borderRadius: 18,
+                      color: "#e2e8f0"
+                    }}
+                  />
+                  <Line type="monotone" dataKey="spi" stroke={chartColors[1]} strokeWidth={2.7} dot={false} />
+                  <Line type="monotone" dataKey="predictedSpi" stroke={chartColors[0]} strokeWidth={2.5} dot={false} strokeDasharray="6 4" />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </GlassPanel>
+
+          <GlassPanel title="Seasonal Pattern Matrix">
+            <SeasonalMatrix values={seasonalData} />
+          </GlassPanel>
         </div>
-      </div>
+      </ExpandablePanel>
+
+      <ExpandablePanel
+        title="Regional Validation"
+        summary="Heatmap, model compare, performance"
+        badge={<BarChart3 className="h-4 w-4 text-cyan-200" />}
+      >
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_360px]">
+          <GlassPanel
+            title="Forecasted Drought Severity Map"
+            rightSlot={<BarChart3 className="h-4 w-4 text-cyan-200" />}
+          >
+            <SpatialForecastHeatmap snapshot={snapshot} severityFilter={severityFilter} />
+          </GlassPanel>
+
+          <div className="space-y-4">
+            <GlassPanel title="Compare Models">
+              <div className="h-[180px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={modelComparison} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
+                    <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
+                    <XAxis dataKey="model" tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
+                    <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
+                    <Tooltip
+                      contentStyle={{
+                        background: "rgba(15,23,42,0.96)",
+                        border: "1px solid rgba(148,163,184,0.18)",
+                        borderRadius: 18,
+                        color: "#e2e8f0"
+                      }}
+                    />
+                    <Bar dataKey="rmse" radius={[8, 8, 0, 0]}>
+                      {modelComparison.map((entry, index) => (
+                        <Cell key={entry.model} fill={chartColors[index] ?? "#22d3ee"} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-3 space-y-2.5">
+                {modelComparison.map((entry) => (
+                  <div key={entry.model} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="font-display text-base text-white">{entry.model}</p>
+                      <span className="text-xs text-slate-400">R2 {entry.r2.toFixed(2)}</span>
+                    </div>
+                    <p className="mt-1.5 text-sm text-slate-300">{entry.note}</p>
+                  </div>
+                ))}
+              </div>
+            </GlassPanel>
+
+            <GlassPanel title="Regional Performance">
+              <div className="space-y-2.5 xl:max-h-[360px] xl:overflow-y-auto xl:pr-1">
+                {regionalPerformance.map((entry) => (
+                  <div key={entry.emirateId} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="font-display text-base text-white">{entry.emirate}</p>
+                      <span className="text-xs text-slate-400">{formatPercent(entry.confidence)}</span>
+                    </div>
+                    <div className="mt-2.5 grid gap-2 text-sm text-slate-300 sm:grid-cols-3">
+                      <p>RMSE {entry.rmse.toFixed(2)}</p>
+                      <p>MAE {entry.mae.toFixed(2)}</p>
+                      <p>R2 {entry.r2.toFixed(2)}</p>
+                    </div>
+                    <p className="mt-1.5 text-xs leading-5 text-slate-400">{entry.note}</p>
+                  </div>
+                ))}
+              </div>
+            </GlassPanel>
+          </div>
+        </div>
+      </ExpandablePanel>
     </div>
   );
 };
