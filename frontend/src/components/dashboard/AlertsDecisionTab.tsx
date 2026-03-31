@@ -30,24 +30,24 @@ export const AlertsDecisionTab = ({
     <div className="grid gap-4 xl:h-full xl:min-h-0 xl:grid-cols-[minmax(0,0.98fr)_450px] 2xl:grid-cols-[minmax(0,0.96fr)_490px]">
       <DecisionAlertsPanel snapshot={snapshot} timelineIndex={timelineIndex} severityFilter={severityFilter} />
 
-      <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[minmax(0,1fr)_auto] xl:overflow-hidden xl:pr-1">
+      <div className="space-y-4 xl:grid xl:min-h-0 xl:grid-rows-[auto_auto] xl:content-start xl:space-y-0 xl:pr-1">
         <EmirateCarousel
           title="Risk Scoring by Emirate"
           items={snapshot.cities}
           activeId={selectedCityId}
           onSelect={onCitySelect}
+          className="xl:self-start"
           badge={
             <div className="inline-flex items-center gap-2 rounded-full border border-rose-400/20 bg-rose-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-rose-100">
               <Siren className="h-3.5 w-3.5" />
               {activeCount}
             </div>
           }
-          slideClassName="h-full"
           renderSlide={(city) => {
             const point = getTimelinePoint(city, timelineIndex);
 
             return (
-              <article className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-y-auto overflow-x-hidden rounded-[22px] bg-white/5 p-3.5">
+              <article className="w-full min-w-0">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="font-display text-[1.75rem] leading-none text-white">{city.emirate}</p>

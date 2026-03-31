@@ -10,7 +10,7 @@ export const OverviewSourcesFooter = ({ snapshot }: { snapshot: DashboardSnapsho
     <footer className="relative flex justify-end">
       <div
         className={cn(
-          "absolute bottom-full right-0 z-20 mb-2 w-full max-w-sm transition-all duration-200 ease-out",
+          "absolute bottom-full right-0 z-20 mb-2 w-[280px] transition-all duration-200 ease-out",
           isOpen ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"
         )}
       >

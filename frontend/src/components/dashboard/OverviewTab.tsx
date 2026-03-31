@@ -6,7 +6,7 @@ import { KpiGrid } from "@/components/dashboard/KpiGrid";
 import { OverviewSourcesFooter } from "@/components/dashboard/OverviewSourcesFooter";
 import { MapPanel } from "@/components/map/MapPanel";
 import { calculatePointRiskScore, getTimelinePoint } from "@/lib/dashboard";
-import { formatPercent, riskBadgeClasses } from "@/lib/utils";
+import { riskBadgeClasses } from "@/lib/utils";
 
 interface OverviewTabProps {
   snapshot: DashboardSnapshot;
@@ -39,18 +39,6 @@ const buildWeatherLabel = (lst: number | null | undefined, soilMoisture: number 
   return "Stable conditions";
 };
 
-const buildWeatherNote = (lst: number | null | undefined, soilMoisture: number | null | undefined) => {
-  if ((lst ?? 0) >= 43) {
-    return "Urban heat still dominant";
-  }
-
-  if ((soilMoisture ?? 1) < 0.2) {
-    return "Dry surface profile";
-  }
-
-  return "Balanced surface moisture";
-};
-
 export const OverviewTab = ({
   snapshot,
   activeMetric,
@@ -61,7 +49,7 @@ export const OverviewTab = ({
   onCitySelect,
   onTimelineChange
 }: OverviewTabProps) => (
-    <div className="flex h-full min-h-0 flex-col gap-4">
+    <div className="relative flex h-full min-h-0 flex-col gap-4">
       <div className="grid gap-4 xl:min-h-0 xl:flex-1 xl:grid-cols-[minmax(0,1.58fr)_390px] xl:items-stretch">
         <MapPanel
           snapshot={snapshot}
@@ -74,7 +62,7 @@ export const OverviewTab = ({
           onTimelineChange={onTimelineChange}
         />
 
-        <aside className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[auto_minmax(0,1fr)] xl:overflow-hidden xl:pr-1">
+        <aside className="space-y-4 xl:grid xl:min-h-0 xl:grid-rows-[auto_auto] xl:content-start xl:pr-1">
           <KpiGrid snapshot={snapshot} selectedCityId={selectedCityId} timelineIndex={timelineIndex} />
 
           <EmirateCarousel
@@ -82,18 +70,16 @@ export const OverviewTab = ({
             items={snapshot.cities}
             activeId={selectedCityId}
             onSelect={onCitySelect}
-            slideClassName="h-full"
+            className="xl:self-start"
             renderSlide={(city) => {
               const point = getTimelinePoint(city, timelineIndex);
               const weatherLabel = buildWeatherLabel(point.lst, point.soilMoisture);
-              const weatherNote = buildWeatherNote(point.lst, point.soilMoisture);
 
               return (
-                <article className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-y-auto overflow-x-hidden rounded-[22px] bg-white/5 p-3.5">
+                <article className="w-full min-w-0">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-display text-[1.75rem] leading-none text-white">{city.emirate}</p>
-                      <p className="mt-1 text-[13px] text-slate-400">{city.region}</p>
                     </div>
                     <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] ring-1 ${riskBadgeClasses[point.riskLevel]}`}>
                       {point.riskLevel}
@@ -107,7 +93,6 @@ export const OverviewTab = ({
                         <span className="text-[11px] uppercase tracking-[0.18em]">Weather</span>
                       </div>
                       <p className="mt-2 font-display text-base text-white">{weatherLabel}</p>
-                      <p className="mt-1 text-[13px] text-slate-300">{weatherNote}</p>
                     </div>
 
                     <div className="min-w-0 rounded-[18px] bg-slate-950/50 p-3">
@@ -116,9 +101,6 @@ export const OverviewTab = ({
                         <span className="text-[11px] uppercase tracking-[0.18em]">Drought</span>
                       </div>
                       <p className="mt-2 font-display text-base text-white">SPI {point.spi?.toFixed(1) ?? "N/A"}</p>
-                      <p className="mt-1 text-[13px] text-slate-300">
-                        Confidence {formatPercent(point.forecastAccuracy)}
-                      </p>
                     </div>
                   </div>
 
@@ -166,6 +148,10 @@ export const OverviewTab = ({
         </aside>
       </div>
 
-      <OverviewSourcesFooter snapshot={snapshot} />
+      <div className="pointer-events-none absolute bottom-4 right-4 z-20">
+        <div className="pointer-events-auto">
+          <OverviewSourcesFooter snapshot={snapshot} />
+        </div>
+      </div>
     </div>
 );

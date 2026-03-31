@@ -51,7 +51,7 @@ export const EmirateCarousel = <T extends EmirateCarouselItem>({
     <GlassPanel
       title={title}
       subtitle={subtitle}
-      className={cn("xl:h-full xl:min-h-0", className)}
+      className={cn("xl:min-h-0", className)}
       rightSlot={
         <div className="flex items-center gap-2">
           {badge}
@@ -73,14 +73,14 @@ export const EmirateCarousel = <T extends EmirateCarouselItem>({
           </button>
         </div>
       }
-      contentClassName="flex h-full min-h-0 flex-col gap-3 overflow-hidden p-3.5"
+      contentClassName="flex min-h-0 flex-col gap-3 p-3.5"
     >
-      <div className="min-h-[320px] min-w-0 flex-1 overflow-hidden rounded-[22px] xl:min-h-0">
-        <div className="flex h-full min-h-0 min-w-0">
+      <div className="min-w-0 rounded-[22px]">
+        <div className="flex min-w-0">
           {activeItem ? (
             <div
               key={activeItem.id}
-              className={cn("flex h-full min-h-0 w-full min-w-0", slideClassName)}
+              className={cn("flex w-full min-w-0", slideClassName)}
             >
               {renderSlide(activeItem)}
             </div>
