@@ -148,7 +148,7 @@ export const GlobalFiltersBar = ({
 
   return (
     <section
-      className="rounded-[22px] border border-white/10 bg-slate-950/60 shadow-glow backdrop-blur-xl"
+      className="relative z-40 rounded-[22px] border border-white/10 bg-slate-950/60 shadow-glow backdrop-blur-xl"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -203,7 +203,7 @@ export const GlobalFiltersBar = ({
           isExpanded ? "grid-rows-[1fr] border-t border-white/6" : "grid-rows-[0fr]"
         )}
       >
-        <div className={cn("overflow-hidden", !isExpanded && "pointer-events-none")}>
+        <div className={cn(isExpanded ? "overflow-visible" : "pointer-events-none overflow-hidden")}>
           <div className="flex flex-wrap gap-2.5 px-3 py-3 xl:flex-nowrap xl:items-center">
             <CompactSelect
               icon={<MapPinned className="h-4 w-4" />}
