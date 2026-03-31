@@ -419,12 +419,22 @@ export const MapPanel = ({
           <div ref={containerRef} className="h-[340px] w-full md:h-[400px] xl:h-full" />
 
           {criticalSignals > 0 ? (
-            <div className="pointer-events-none absolute right-3 top-3 rounded-full border border-rose-400/30 bg-rose-500/15 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-100 shadow-ember">
+            <div
+              className={cn(
+                "pointer-events-none absolute right-3 top-3 rounded-full border border-rose-400/30 bg-rose-500/15 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-100 shadow-ember",
+                theme === "light" && "border-rose-300/70 bg-rose-100/95 text-rose-700"
+              )}
+            >
               Red signal live - {criticalSignals} hotspot{criticalSignals > 1 ? "s" : ""}
             </div>
           ) : null}
 
-          <div className="pointer-events-none absolute left-3 top-3 max-w-[260px] rounded-[18px] border border-white/10 bg-slate-950/88 px-3 py-2.5 backdrop-blur-xl">
+          <div
+            className={cn(
+              "pointer-events-none absolute left-3 top-3 max-w-[260px] rounded-[18px] border border-white/10 bg-slate-950/88 px-3 py-2.5 backdrop-blur-xl",
+              theme === "light" && "border-slate-300/70 bg-white/94 shadow-[0_12px_28px_rgba(148,163,184,0.16)]"
+            )}
+          >
             <p className={cn("text-[11px] uppercase tracking-[0.22em] text-cyan-200", selectedIsCritical && "text-rose-200")}>Intelligence Tip</p>
             <p className="mt-1.5 line-clamp-3 text-[13px] leading-5 text-slate-200">
               Focus on {selectedCity.emirate}: {selectedCity.summaryText}
@@ -434,7 +444,9 @@ export const MapPanel = ({
           <div
             className={cn(
               "pointer-events-none absolute bottom-3 left-3 max-w-[300px] rounded-[18px] border border-white/10 bg-slate-950/88 px-3 py-2.5 backdrop-blur-xl",
-              selectedIsCritical && "border-rose-400/30 bg-rose-950/55 shadow-ember"
+              theme === "light" && !selectedIsCritical && "border-slate-300/70 bg-white/94 shadow-[0_12px_28px_rgba(148,163,184,0.16)]",
+              selectedIsCritical && "border-rose-400/30 bg-rose-950/55 shadow-ember",
+              selectedIsCritical && theme === "light" && "border-rose-300/70 bg-rose-100/96 shadow-[0_12px_28px_rgba(244,63,94,0.14)]"
             )}
           >
             <p className={cn("text-[11px] uppercase tracking-[0.22em] text-cyan-200", selectedIsCritical && "text-rose-200")}>Forecast Summary</p>
@@ -453,7 +465,7 @@ export const MapPanel = ({
                 max={snapshot.timeline.length - 1}
                 value={timelineIndex}
                 onChange={(event) => onTimelineChange(Number(event.target.value))}
-                className="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-cyan-300"
+                className="ev-range h-2 w-full cursor-pointer appearance-none rounded-full"
               />
               <div className="mt-3 flex justify-between text-[11px] uppercase tracking-[0.18em] text-slate-500">
                 {snapshot.timeline.map((entry, index) => (

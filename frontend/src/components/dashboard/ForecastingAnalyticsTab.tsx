@@ -28,6 +28,7 @@ import { cn, formatPercent } from "@/lib/utils";
 
 interface ForecastingAnalyticsTabProps {
   snapshot: DashboardSnapshot;
+  theme: "dark" | "light";
   selectedCityId: string;
   timelineIndex: number;
   selectedDateRange: DateRangeKey;
@@ -71,9 +72,11 @@ const SeasonalMatrix = ({
 
 const SpatialForecastHeatmap = ({
   snapshot,
+  theme,
   severityFilter
 }: {
   snapshot: DashboardSnapshot;
+  theme: "dark" | "light";
   severityFilter: SeverityFilter;
 }) => {
   const visibleCells = snapshot.analytics.spatialForecast.filter((cell) => {
@@ -96,8 +99,20 @@ const SpatialForecastHeatmap = ({
   ];
 
   return (
-    <div className="relative min-h-[520px] overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(2,6,23,0.85))] xl:h-full xl:min-h-0">
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:48px_48px]" />
+    <div
+      className={cn(
+        "relative min-h-[520px] overflow-hidden rounded-[22px] border xl:h-full xl:min-h-0",
+        theme === "light"
+          ? "border-slate-200 bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.10),_transparent_34%),linear-gradient(180deg,rgba(248,250,252,0.98),rgba(235,243,249,0.98))]"
+          : "border-white/8 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(2,6,23,0.85))]"
+      )}
+    >
+      <div
+        className={cn(
+          "absolute inset-0 bg-[linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:48px_48px]",
+          theme === "light" && "opacity-80"
+        )}
+      />
       {layout.map((position) => {
         const cell = visibleCells.find((entry) => entry.emirateId === position.id);
 
@@ -107,12 +122,20 @@ const SpatialForecastHeatmap = ({
 
         const tone =
           cell.droughtSeverity === "critical"
-            ? "border-rose-400/30 bg-rose-500/12"
+            ? theme === "light"
+              ? "border-rose-300 bg-rose-100/95"
+              : "border-rose-400/30 bg-rose-500/12"
             : cell.droughtSeverity === "high"
-              ? "border-orange-400/25 bg-orange-500/10"
+              ? theme === "light"
+                ? "border-orange-300 bg-orange-100/95"
+                : "border-orange-400/25 bg-orange-500/10"
               : cell.droughtSeverity === "moderate"
-                ? "border-amber-400/20 bg-amber-500/8"
-                : "border-emerald-400/20 bg-emerald-500/8";
+                ? theme === "light"
+                  ? "border-amber-300 bg-amber-50/95"
+                  : "border-amber-400/20 bg-amber-500/8"
+                : theme === "light"
+                  ? "border-emerald-300 bg-emerald-50/95"
+                  : "border-emerald-400/20 bg-emerald-500/8";
 
         return (
           <div
@@ -136,6 +159,7 @@ const SpatialForecastHeatmap = ({
 
 export const ForecastingAnalyticsTab = ({
   snapshot,
+  theme,
   selectedCityId,
   timelineIndex,
   selectedDateRange,
@@ -304,7 +328,7 @@ export const ForecastingAnalyticsTab = ({
             className="xl:flex xl:h-full xl:flex-col"
             contentClassName="xl:flex-1 xl:min-h-0"
           >
-            <SpatialForecastHeatmap snapshot={snapshot} severityFilter={severityFilter} />
+            <SpatialForecastHeatmap snapshot={snapshot} theme={theme} severityFilter={severityFilter} />
           </GlassPanel>
 
           <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[250px_minmax(0,1fr)] xl:gap-4 xl:space-y-0">

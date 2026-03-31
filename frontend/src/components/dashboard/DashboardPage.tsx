@@ -244,6 +244,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
           {activeTab === "forecasting" ? (
             <ForecastingAnalyticsTab
               snapshot={snapshot}
+              theme={theme}
               selectedCityId={selectedCityId}
               timelineIndex={timelineIndex}
               selectedDateRange={selectedDateRange}
