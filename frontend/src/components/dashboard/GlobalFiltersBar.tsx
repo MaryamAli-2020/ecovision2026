@@ -4,8 +4,10 @@ import type {
   DateRangeKey,
   SeverityFilter
 } from "@ecovision/shared";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Filter, Globe2, MapPinned, ThermometerSun } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 interface GlobalFiltersBarProps {
   snapshot: DashboardSnapshot;
@@ -72,70 +74,128 @@ export const GlobalFiltersBar = ({
   onCityChange,
   onDateRangeChange,
   onSeverityChange
-}: GlobalFiltersBarProps) => (
-  <section className="rounded-[22px] border border-white/10 bg-slate-950/60 px-3 py-3 shadow-glow backdrop-blur-xl">
-    <div className="flex flex-wrap gap-2.5 xl:flex-nowrap xl:items-center">
-      <CompactSelect
-        icon={<MapPinned className="h-4 w-4" />}
-        label="Emirate"
-        value={selectedCityId}
-        onChange={onCityChange}
-      >
-        {snapshot.cities.map((city) => (
-          <option key={city.id} value={city.id}>
-            {city.emirate}
-          </option>
-        ))}
-      </CompactSelect>
+}: GlobalFiltersBarProps) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPinned, setIsPinned] = useState(false);
+  const isExpanded = isHovered || isPinned;
+  const selectedCity = snapshot.cities.find((city) => city.id === selectedCityId) ?? snapshot.cities[0];
+  const selectedRange = snapshot.analytics.dateRanges.find((range) => range.id === selectedDateRange);
+  const selectedSeverity = severityOptions.find((option) => option.value === severityFilter);
+  const selectedMetric = metricOptions.find((option) => option.value === activeMetric);
 
-      <CompactSelect
-        icon={<Filter className="h-4 w-4" />}
-        label="Date Range"
-        value={selectedDateRange}
-        onChange={(value) => onDateRangeChange(value as DateRangeKey)}
-      >
-        {snapshot.analytics.dateRanges.map((range) => (
-          <option key={range.id} value={range.id}>
-            {range.label}
-          </option>
-        ))}
-      </CompactSelect>
+  return (
+    <section
+      className="overflow-hidden rounded-[22px] border border-white/10 bg-slate-950/60 shadow-glow backdrop-blur-xl"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="flex items-center gap-3 px-3 py-2.5">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden">
+          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300">
+            <Filter className="h-4 w-4" />
+          </span>
+          <div className="min-w-0">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-slate-500">Global Filters</p>
+            <div className="mt-1 flex min-w-0 flex-wrap gap-1.5">
+              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
+                {selectedCity?.emirate ?? "UAE"}
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
+                {selectedRange?.label ?? selectedDateRange}
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
+                {selectedSeverity?.label ?? severityFilter}
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
+                {selectedMetric?.label ?? activeMetric}
+              </span>
+            </div>
+          </div>
+        </div>
 
-      <CompactSelect
-        icon={<ThermometerSun className="h-4 w-4" />}
-        label="Severity"
-        value={severityFilter}
-        onChange={(value) => onSeverityChange(value as SeverityFilter)}
-      >
-        {severityOptions.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </CompactSelect>
+        <div className="hidden items-center gap-2 lg:flex">
+          <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-[11px] text-cyan-100">
+            {snapshot.analytics.model.name}
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
+            <Globe2 className="h-3.5 w-3.5 text-cyan-200" />
+            {snapshot.analytics.dataSources.length} sources
+          </span>
+        </div>
 
-      <CompactSelect
-        icon={<Filter className="h-4 w-4" />}
-        label="Indicator"
-        value={activeMetric}
-        onChange={(value) => onMetricChange(value as ClimateMetric)}
-      >
-        {metricOptions.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </CompactSelect>
-
-      <div className="flex flex-wrap items-center gap-2 xl:ml-auto xl:shrink-0">
-        <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-[11px] text-cyan-100">
-          {snapshot.analytics.model.name}
-        </span>
-        <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
-          <Globe2 className="h-3.5 w-3.5 text-cyan-200" />
-          {snapshot.analytics.dataSources.length} sources
-        </span>
+        <button
+          type="button"
+          onClick={() => setIsPinned((value) => !value)}
+          aria-expanded={isExpanded}
+          aria-label="Toggle filters"
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-lg font-semibold text-slate-200 transition hover:border-cyan-400/30 hover:text-white"
+        >
+          v
+        </button>
       </div>
-    </div>
-  </section>
-);
+
+      <div
+        className={cn(
+          "grid transition-all duration-300 ease-out",
+          isExpanded ? "grid-rows-[1fr] border-t border-white/6" : "grid-rows-[0fr]"
+        )}
+      >
+        <div className={cn("overflow-hidden", !isExpanded && "pointer-events-none")}>
+          <div className="flex flex-wrap gap-2.5 px-3 py-3 xl:flex-nowrap xl:items-center">
+            <CompactSelect
+              icon={<MapPinned className="h-4 w-4" />}
+              label="Emirate"
+              value={selectedCityId}
+              onChange={onCityChange}
+            >
+              {snapshot.cities.map((city) => (
+                <option key={city.id} value={city.id}>
+                  {city.emirate}
+                </option>
+              ))}
+            </CompactSelect>
+
+            <CompactSelect
+              icon={<Filter className="h-4 w-4" />}
+              label="Date Range"
+              value={selectedDateRange}
+              onChange={(value) => onDateRangeChange(value as DateRangeKey)}
+            >
+              {snapshot.analytics.dateRanges.map((range) => (
+                <option key={range.id} value={range.id}>
+                  {range.label}
+                </option>
+              ))}
+            </CompactSelect>
+
+            <CompactSelect
+              icon={<ThermometerSun className="h-4 w-4" />}
+              label="Severity"
+              value={severityFilter}
+              onChange={(value) => onSeverityChange(value as SeverityFilter)}
+            >
+              {severityOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </CompactSelect>
+
+            <CompactSelect
+              icon={<Filter className="h-4 w-4" />}
+              label="Indicator"
+              value={activeMetric}
+              onChange={(value) => onMetricChange(value as ClimateMetric)}
+            >
+              {metricOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </CompactSelect>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
