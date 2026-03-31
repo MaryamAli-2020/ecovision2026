@@ -104,7 +104,7 @@ export const OverviewTab = ({
                     </div>
                   </div>
 
-                  <div className="mt-2 grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2">
+                  <div className="mt-2 grid grid-cols-2 gap-2">
                     <div className="min-w-0 rounded-[18px] bg-slate-950/50 px-3 py-2 text-sm text-slate-200">
                       <span className="inline-flex items-center gap-2 text-slate-400">
                         <Database className="h-3.5 w-3.5" />
@@ -119,6 +119,9 @@ export const OverviewTab = ({
                       </span>
                       <p className="mt-1 text-[15px] text-white">{point.rainfallDeficit?.toFixed(0) ?? "N/A"} mm</p>
                     </div>
+                  </div>
+
+                  <div className="mt-2 grid grid-cols-3 gap-2">
                     <div className="min-w-0 rounded-[18px] bg-slate-950/50 px-3 py-2 text-sm text-slate-200">
                       <span className="inline-flex items-center gap-2 text-slate-400">
                         <Leaf className="h-3.5 w-3.5" />

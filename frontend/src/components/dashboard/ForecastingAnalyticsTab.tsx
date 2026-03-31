@@ -96,7 +96,7 @@ const SpatialForecastHeatmap = ({
   ];
 
   return (
-    <div className="relative min-h-[400px] overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(2,6,23,0.85))]">
+    <div className="relative min-h-[520px] overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(2,6,23,0.85))]">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:48px_48px]" />
       {layout.map((position) => {
         const cell = visibleCells.find((entry) => entry.emirateId === position.id);
@@ -150,9 +150,9 @@ export const ForecastingAnalyticsTab = ({
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-3 xl:grid-cols-4">
+      <div className="mx-auto grid w-full max-w-[1380px] gap-3 xl:grid-cols-4">
         {snapshot.analytics.anomalySignals.map((signal) => (
-          <div key={signal.label} className="rounded-[20px] border border-white/8 bg-white/5 p-3">
+          <div key={signal.label} className="flex min-h-[112px] flex-col justify-center rounded-[20px] border border-white/8 bg-white/5 px-4 py-3">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{signal.label}</p>
             <p className="mt-2 font-display text-2xl text-white">{signal.value.toFixed(2)}</p>
           </div>
@@ -293,7 +293,7 @@ export const ForecastingAnalyticsTab = ({
         summary="Heatmap, model compare, performance"
         badge={<BarChart3 className="h-4 w-4 text-cyan-200" />}
       >
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_360px]">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.18fr)_320px]">
           <GlassPanel
             title="Forecasted Drought Severity Map"
             rightSlot={<BarChart3 className="h-4 w-4 text-cyan-200" />}
@@ -301,9 +301,9 @@ export const ForecastingAnalyticsTab = ({
             <SpatialForecastHeatmap snapshot={snapshot} severityFilter={severityFilter} />
           </GlassPanel>
 
-          <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[minmax(260px,0.8fr)_minmax(0,1fr)] xl:gap-4 xl:space-y-0">
-            <GlassPanel title="Compare Models" className="h-full" contentClassName="h-full p-3.5">
-              <div className="h-full min-h-[220px]">
+          <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[185px_minmax(0,1fr)] xl:gap-4 xl:space-y-0">
+            <GlassPanel title="Compare Models" className="h-full" contentClassName="h-full p-3">
+              <div className="h-full min-h-[135px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={modelComparison} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
                     <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
