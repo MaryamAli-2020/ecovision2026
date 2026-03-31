@@ -150,11 +150,11 @@ export const ForecastingAnalyticsTab = ({
 
   return (
     <div className="space-y-4">
-      <div className="mx-auto grid w-full max-w-[1380px] gap-3 xl:grid-cols-4">
+      <div className="mx-auto grid w-full max-w-[1260px] gap-2.5 xl:grid-cols-4">
         {snapshot.analytics.anomalySignals.map((signal) => (
-          <div key={signal.label} className="flex min-h-[112px] flex-col justify-center rounded-[20px] border border-white/8 bg-white/5 px-4 py-3">
+          <div key={signal.label} className="flex min-h-[92px] flex-col justify-center rounded-[20px] border border-white/8 bg-white/5 px-4 py-2.5">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{signal.label}</p>
-            <p className="mt-2 font-display text-2xl text-white">{signal.value.toFixed(2)}</p>
+            <p className="mt-1.5 font-display text-2xl text-white">{signal.value.toFixed(2)}</p>
           </div>
         ))}
       </div>
@@ -293,21 +293,22 @@ export const ForecastingAnalyticsTab = ({
         summary="Heatmap, model compare, performance"
         badge={<BarChart3 className="h-4 w-4 text-cyan-200" />}
       >
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.18fr)_320px]">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.18fr)_320px] xl:items-stretch">
           <GlassPanel
             title="Forecasted Drought Severity Map"
             rightSlot={<BarChart3 className="h-4 w-4 text-cyan-200" />}
+            className="xl:h-full"
           >
             <SpatialForecastHeatmap snapshot={snapshot} severityFilter={severityFilter} />
           </GlassPanel>
 
-          <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[185px_minmax(0,1fr)] xl:gap-4 xl:space-y-0">
-            <GlassPanel title="Compare Models" className="h-full" contentClassName="h-full p-3">
-              <div className="h-full min-h-[135px]">
+          <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[160px_minmax(0,1fr)] xl:gap-4 xl:space-y-0">
+            <GlassPanel title="Compare Models" className="h-full overflow-hidden" contentClassName="h-full min-h-0 p-2.5">
+              <div className="h-full min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={modelComparison} margin={{ top: 8, right: 0, left: -18, bottom: 0 }}>
+                  <BarChart data={modelComparison} margin={{ top: 4, right: 6, left: -18, bottom: 20 }}>
                     <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
-                    <XAxis dataKey="model" tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
+                    <XAxis dataKey="model" height={28} tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
                     <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
                     <Tooltip
                       contentStyle={{
@@ -327,7 +328,7 @@ export const ForecastingAnalyticsTab = ({
               </div>
             </GlassPanel>
 
-            <GlassPanel title="Regional Performance" className="h-full" contentClassName="h-full p-3.5">
+            <GlassPanel title="Regional Performance" className="h-full min-h-0 overflow-hidden" contentClassName="h-full min-h-0 p-3.5">
               <div className="space-y-2.5 xl:h-full xl:overflow-y-auto xl:pr-1">
                 {regionalPerformance.map((entry) => (
                   <div key={entry.emirateId} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">

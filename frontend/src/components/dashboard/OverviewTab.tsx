@@ -62,7 +62,7 @@ export const OverviewTab = ({
           onTimelineChange={onTimelineChange}
         />
 
-        <aside className="space-y-4 xl:grid xl:min-h-0 xl:grid-rows-[auto_auto] xl:content-start xl:pr-1">
+        <aside className="space-y-3 xl:grid xl:min-h-0 xl:grid-rows-[auto_auto] xl:content-start xl:pr-1">
           <KpiGrid snapshot={snapshot} selectedCityId={selectedCityId} timelineIndex={timelineIndex} />
 
           <EmirateCarousel
@@ -106,14 +106,14 @@ export const OverviewTab = ({
 
                   <div className="mt-2 grid grid-cols-2 gap-2">
                     <div className="min-w-0 rounded-[18px] bg-slate-950/50 px-3 py-2 text-sm text-slate-200">
-                      <span className="inline-flex items-center gap-2 text-slate-400">
+                      <span className="inline-flex items-center gap-1.5 text-[12px] text-slate-400">
                         <Database className="h-3.5 w-3.5" />
                         Risk score
                       </span>
                       <p className="mt-1 text-[15px] text-white">{Math.round(calculatePointRiskScore(point))}</p>
                     </div>
                     <div className="min-w-0 rounded-[18px] bg-slate-950/50 px-3 py-2 text-sm text-slate-200">
-                      <span className="inline-flex items-center gap-2 text-slate-400">
+                      <span className="inline-flex items-center gap-1.5 text-[12px] text-slate-400">
                         <Wind className="h-3.5 w-3.5" />
                         Rainfall deficit
                       </span>
@@ -121,23 +121,23 @@ export const OverviewTab = ({
                     </div>
                   </div>
 
-                  <div className="mt-2 grid grid-cols-3 gap-2">
-                    <div className="min-w-0 rounded-[18px] bg-slate-950/50 px-3 py-2 text-sm text-slate-200">
-                      <span className="inline-flex items-center gap-2 text-slate-400">
+                  <div className="mt-1.5 grid grid-cols-3 gap-1">
+                    <div className="min-w-0 rounded-[18px] bg-slate-950/50 px-2.5 py-2 text-sm text-slate-200">
+                      <span className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] text-slate-400">
                         <Leaf className="h-3.5 w-3.5" />
                         NDVI
                       </span>
                       <p className="mt-1 text-[15px] text-white">{point.ndvi?.toFixed(2) ?? "N/A"}</p>
                     </div>
-                    <div className="min-w-0 rounded-[18px] bg-slate-950/50 px-3 py-2 text-sm text-slate-200">
-                      <span className="inline-flex items-center gap-2 text-slate-400">
+                    <div className="min-w-0 rounded-[18px] bg-slate-950/50 px-2.5 py-2 text-sm text-slate-200">
+                      <span className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] text-slate-400">
                         <ThermometerSun className="h-3.5 w-3.5" />
                         LST
                       </span>
                       <p className="mt-1 text-[15px] text-white">{point.lst?.toFixed(1) ?? "N/A"} C</p>
                     </div>
-                    <div className="min-w-0 rounded-[18px] bg-slate-950/50 px-3 py-2 text-sm text-slate-200">
-                      <span className="inline-flex items-center gap-2 text-slate-400">
+                    <div className="min-w-0 rounded-[18px] bg-slate-950/50 px-2.5 py-2 text-sm text-slate-200">
+                      <span className="inline-flex items-center gap-1 whitespace-nowrap text-[9px] uppercase tracking-[0.08em] text-slate-400">
                         <Droplets className="h-3.5 w-3.5" />
                         Soil moisture
                       </span>
