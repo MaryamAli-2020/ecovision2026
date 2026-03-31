@@ -152,10 +152,9 @@ export const ForecastingAnalyticsTab = ({
     <div className="space-y-4">
       <div className="grid gap-3 xl:grid-cols-4">
         {snapshot.analytics.anomalySignals.map((signal) => (
-          <div key={signal.label} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">
+          <div key={signal.label} className="rounded-[20px] border border-white/8 bg-white/5 p-3">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{signal.label}</p>
             <p className="mt-2 font-display text-2xl text-white">{signal.value.toFixed(2)}</p>
-            <p className="mt-1.5 text-sm leading-6 text-slate-300">{signal.note}</p>
           </div>
         ))}
       </div>

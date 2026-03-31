@@ -30,7 +30,7 @@ export const AlertsDecisionTab = ({
     <div className="grid gap-4 xl:h-full xl:min-h-0 xl:grid-cols-[minmax(0,0.98fr)_450px] 2xl:grid-cols-[minmax(0,0.96fr)_490px]">
       <DecisionAlertsPanel snapshot={snapshot} timelineIndex={timelineIndex} severityFilter={severityFilter} />
 
-      <div className="space-y-4 xl:grid xl:min-h-0 xl:grid-rows-[auto_auto] xl:content-start xl:space-y-0 xl:pr-1">
+      <div className="space-y-4 xl:grid xl:min-h-0 xl:grid-rows-[auto_auto] xl:content-start xl:gap-4 xl:space-y-0 xl:pr-1">
         <EmirateCarousel
           title="Risk Scoring by Emirate"
           items={snapshot.cities}
