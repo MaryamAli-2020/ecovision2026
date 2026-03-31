@@ -25,7 +25,10 @@ const downloadBlob = (blob: Blob, filename: string) => {
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = filename;
+  anchor.style.display = "none";
+  document.body.appendChild(anchor);
   anchor.click();
+  document.body.removeChild(anchor);
   URL.revokeObjectURL(url);
 };
 
@@ -64,9 +67,11 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const previousScrollRef = useRef(0);
   const [headerHidden, setHeaderHidden] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
   const snapshot = dashboard.snapshot as DashboardSnapshot;
   const selectedCity = getSelectedCity(snapshot, selectedCityId);
   const criticalSignals = countCriticalSignals(snapshot, timelineIndex);
+  const latestAssistantMessage = [...messages].reverse().find((message) => message.role === "assistant");
 
   const chatMutation = useMutation({
     mutationFn: sendChatMessage
@@ -74,6 +79,10 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
 
   const audioMutation = useMutation({
     mutationFn: generateAudioBrief
+  });
+
+  const reportMutation = useMutation({
+    mutationFn: downloadPdfReport
   });
 
   useEffect(() => {
@@ -128,6 +137,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
   };
 
   const handleSend = async (question: string) => {
+    setPdfError(null);
     setLastQuestion(question);
     appendMessages([createUserMessage(question, language)]);
 
@@ -145,15 +155,21 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
   };
 
   const handleDownloadPdf = async (message: ChatMessage) => {
-    const blob = await downloadPdfReport({
-      language,
-      selectedCityId,
-      question: lastQuestion,
-      assistantMessage: message.content,
-      snapshot
-    });
+    setPdfError(null);
 
-    downloadBlob(blob, `ecovision-${selectedCityId}.pdf`);
+    try {
+      const { blob, filename } = await reportMutation.mutateAsync({
+        language,
+        selectedCityId,
+        question: lastQuestion,
+        assistantMessage: message.content,
+        snapshot
+      });
+
+      downloadBlob(blob, filename ?? `ecovision-${selectedCityId}.pdf`);
+    } catch (error) {
+      setPdfError(error instanceof Error ? error.message : "Unable to generate the PDF report.");
+    }
   };
 
   const handleUseDemo = () => {
@@ -257,10 +273,13 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
               snapshot={snapshot}
               selectedCityId={selectedCityId}
               messages={messages}
+              latestAssistantMessage={latestAssistantMessage}
               language={language}
               briefing={currentBrief}
               isSpeaking={isSpeaking}
               isSending={chatMutation.isPending}
+              isDownloadingPdf={reportMutation.isPending}
+              pdfError={pdfError}
               onLanguageChange={setLanguage}
               onPlay={() => {
                 if (!currentBrief.text) {
@@ -274,6 +293,12 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
               }}
               onExampleClick={(question) => {
                 void handleSend(question);
+              }}
+              onDownloadLatestPdf={() => {
+                if (!latestAssistantMessage) {
+                  return;
+                }
+                void handleDownloadPdf(latestAssistantMessage);
               }}
               onDownloadPdf={(message) => {
                 void handleDownloadPdf(message);

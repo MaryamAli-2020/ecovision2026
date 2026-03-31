@@ -89,6 +89,27 @@ export const generateAudioBrief = (payload: AudioBriefRequest) =>
     body: JSON.stringify(payload)
   });
 
+const parseFilename = (contentDisposition: string | null) => {
+  if (!contentDisposition) {
+    return null;
+  }
+
+  const utfMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+
+  if (utfMatch?.[1]) {
+    return decodeURIComponent(utfMatch[1]);
+  }
+
+  const quotedMatch = contentDisposition.match(/filename="([^"]+)"/i);
+
+  if (quotedMatch?.[1]) {
+    return quotedMatch[1];
+  }
+
+  const plainMatch = contentDisposition.match(/filename=([^;]+)/i);
+  return plainMatch?.[1]?.trim() ?? null;
+};
+
 export const downloadPdfReport = async (payload: ReportRequest) => {
   const response = await fetch(`${API_BASE}/api/report/pdf`, {
     method: "POST",
@@ -102,5 +123,8 @@ export const downloadPdfReport = async (payload: ReportRequest) => {
     throw new Error(await response.text());
   }
 
-  return response.blob();
+  return {
+    blob: await response.blob(),
+    filename: parseFilename(response.headers.get("Content-Disposition"))
+  };
 };

@@ -12,15 +12,19 @@ interface AIToolsTabProps {
   snapshot: DashboardSnapshot;
   selectedCityId: string;
   messages: ChatMessage[];
+  latestAssistantMessage?: ChatMessage;
   language: Language;
   briefing: AudioBrief;
   isSpeaking: boolean;
   isSending: boolean;
+  isDownloadingPdf: boolean;
+  pdfError: string | null;
   onLanguageChange: (language: Language) => void;
   onPlay: () => void;
   onStop: () => void;
   onSend: (question: string) => void;
   onExampleClick: (question: string) => void;
+  onDownloadLatestPdf: () => void;
   onDownloadPdf: (message: ChatMessage) => void;
   onGenerateAudio: () => void;
 }
@@ -28,15 +32,19 @@ interface AIToolsTabProps {
 export const AIToolsTab = ({
   snapshot,
   messages,
+  latestAssistantMessage,
   language,
   briefing,
   isSpeaking,
   isSending,
+  isDownloadingPdf,
+  pdfError,
   onLanguageChange,
   onPlay,
   onStop,
   onSend,
   onExampleClick,
+  onDownloadLatestPdf,
   onDownloadPdf,
   onGenerateAudio
 }: AIToolsTabProps) => (
@@ -54,11 +62,15 @@ export const AIToolsTab = ({
       <ClimateAssistantPanel
         snapshot={snapshot}
         messages={messages}
+        latestAssistantMessage={latestAssistantMessage}
         language={language}
         isSending={isSending}
+        isDownloadingPdf={isDownloadingPdf}
+        pdfError={pdfError}
         onLanguageChange={onLanguageChange}
         onSend={onSend}
         onExampleClick={onExampleClick}
+        onDownloadLatestPdf={onDownloadLatestPdf}
         onDownloadPdf={onDownloadPdf}
         onGenerateAudio={onGenerateAudio}
       />

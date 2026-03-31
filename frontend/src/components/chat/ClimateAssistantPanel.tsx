@@ -1,5 +1,5 @@
 import type { ChatMessage, DashboardSnapshot, Language } from "@ecovision/shared";
-import { Download, Languages, MessageSquareText, Send, Volume2 } from "lucide-react";
+import { Download, Languages, Loader2, MessageSquareText, Send, Volume2 } from "lucide-react";
 import { useState } from "react";
 
 import { GlassPanel } from "@/components/ui/GlassPanel";
@@ -8,11 +8,15 @@ import { cn, riskBadgeClasses } from "@/lib/utils";
 interface ClimateAssistantPanelProps {
   snapshot: DashboardSnapshot;
   messages: ChatMessage[];
+  latestAssistantMessage?: ChatMessage;
   language: Language;
   isSending: boolean;
+  isDownloadingPdf: boolean;
+  pdfError: string | null;
   onLanguageChange: (language: Language) => void;
   onSend: (question: string) => void;
   onExampleClick: (question: string) => void;
+  onDownloadLatestPdf: () => void;
   onDownloadPdf: (message: ChatMessage) => void;
   onGenerateAudio: () => void;
 }
@@ -20,15 +24,20 @@ interface ClimateAssistantPanelProps {
 export const ClimateAssistantPanel = ({
   snapshot,
   messages,
+  latestAssistantMessage,
   language,
   isSending,
+  isDownloadingPdf,
+  pdfError,
   onLanguageChange,
   onSend,
   onExampleClick,
+  onDownloadLatestPdf,
   onDownloadPdf,
   onGenerateAudio
 }: ClimateAssistantPanelProps) => {
   const [question, setQuestion] = useState("");
+  const hasDownloadableReport = Boolean(latestAssistantMessage);
 
   const submitQuestion = () => {
     if (!question.trim() || isSending) {
@@ -43,23 +52,41 @@ export const ClimateAssistantPanel = ({
     <>
       <GlassPanel title="AI Climate Assistant" rightSlot={<MessageSquareText className="h-4 w-4 text-cyan-200" />}>
         <div className="space-y-4">
-          <div className="flex flex-wrap gap-2">
-            {(["en", "ar"] as Language[]).map((entry) => (
-              <button
-                key={entry}
-                className={cn(
-                  "rounded-2xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] transition",
-                  language === entry ? "bg-white text-slate-950" : "border border-white/10 bg-white/5 text-slate-300"
-                )}
-                onClick={() => onLanguageChange(entry)}
-              >
-                <span className="inline-flex items-center gap-2">
-                  <Languages className="h-3.5 w-3.5" />
-                  {entry}
-                </span>
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-2">
+              {(["en", "ar"] as Language[]).map((entry) => (
+                <button
+                  key={entry}
+                  className={cn(
+                    "rounded-2xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] transition",
+                    language === entry ? "bg-white text-slate-950" : "border border-white/10 bg-white/5 text-slate-300"
+                  )}
+                  onClick={() => onLanguageChange(entry)}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <Languages className="h-3.5 w-3.5" />
+                    {entry}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <button
+              className={cn(
+                "inline-flex items-center gap-2 rounded-2xl px-3 py-2 text-xs font-semibold transition",
+                hasDownloadableReport
+                  ? "border border-cyan-400/25 bg-cyan-400/10 text-cyan-100"
+                  : "cursor-not-allowed border border-white/10 bg-white/5 text-slate-500"
+              )}
+              onClick={onDownloadLatestPdf}
+              disabled={!hasDownloadableReport || isDownloadingPdf}
+            >
+              {isDownloadingPdf ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+              {isDownloadingPdf ? "Generating PDF..." : "Download Latest PDF"}
+            </button>
           </div>
+
+          {pdfError ? <p className="text-xs text-rose-300">{pdfError}</p> : null}
 
           <div className="flex flex-wrap gap-2">
             {snapshot.sampleQuestions[language].map((item) => (
@@ -115,11 +142,12 @@ export const ClimateAssistantPanel = ({
                 {message.role === "assistant" ? (
                   <div className="mt-4 flex flex-wrap gap-2">
                     <button
-                      className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-100"
+                      className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
                       onClick={() => onDownloadPdf(message)}
+                      disabled={isDownloadingPdf}
                     >
-                      <Download className="h-3.5 w-3.5" />
-                      Download PDF
+                      {isDownloadingPdf ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+                      {isDownloadingPdf ? "Generating PDF..." : "Download PDF"}
                     </button>
                     <button
                       className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/25 bg-cyan-400/10 px-3 py-2 text-xs font-semibold text-cyan-100"
