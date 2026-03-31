@@ -151,7 +151,7 @@ export const OverviewTab = ({
         </aside>
       </div>
 
-      <div className="pointer-events-none absolute bottom-4 right-4 z-20 xl:right-[420px] 2xl:right-[450px]">
+      <div className="pointer-events-none fixed bottom-4 right-4 z-40">
         <div className="pointer-events-auto">
           <OverviewSourcesFooter snapshot={snapshot} />
         </div>

@@ -429,20 +429,14 @@ export const MapPanel = ({
 
         <div className="border-t border-white/8 px-4 py-2.5">
           <div className="grid gap-3">
-            <div className="rounded-[24px] border border-white/8 bg-white/5 p-3">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Timeline</p>
-                <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-100">
-                  {formatMonth(snapshot.timeline[timelineIndex])}
-                </span>
-              </div>
+            <div className="px-1 py-1">
               <input
                 type="range"
                 min={0}
                 max={snapshot.timeline.length - 1}
                 value={timelineIndex}
                 onChange={(event) => onTimelineChange(Number(event.target.value))}
-                className="mt-4 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-cyan-300"
+                className="h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-cyan-300"
               />
               <div className="mt-3 flex justify-between text-[11px] uppercase tracking-[0.18em] text-slate-500">
                 {snapshot.timeline.map((entry, index) => (

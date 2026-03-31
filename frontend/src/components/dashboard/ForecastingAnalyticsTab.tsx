@@ -220,12 +220,14 @@ export const ForecastingAnalyticsTab = ({
         summary="Drivers, archive, seasonality"
         badge={<Waves className="h-4 w-4 text-cyan-200" />}
       >
-        <div className="grid gap-4 xl:grid-cols-3">
+        <div className="grid gap-4 xl:grid-cols-3 xl:items-stretch">
           <GlassPanel
             title="Driver Forecast Signals"
             rightSlot={<Waves className="h-4 w-4 text-cyan-200" />}
+            className="xl:flex xl:min-h-[390px] xl:flex-col"
+            contentClassName="xl:flex-1 xl:min-h-0"
           >
-            <div className="h-[280px]">
+            <div className="h-[320px] xl:h-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={drivers} margin={{ top: 6, right: 0, left: -18, bottom: 0 }}>
                   <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
@@ -250,8 +252,10 @@ export const ForecastingAnalyticsTab = ({
           <GlassPanel
             title={`Monthly SPI Archive - ${selectedCity.emirate}`}
             rightSlot={<Activity className="h-4 w-4 text-cyan-200" />}
+            className="xl:flex xl:min-h-[390px] xl:flex-col"
+            contentClassName="xl:flex-1 xl:min-h-0"
           >
-            <div className="h-[280px]">
+            <div className="h-[320px] xl:h-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={trendData} margin={{ top: 6, right: 0, left: -18, bottom: 0 }}>
                   <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
@@ -293,7 +297,7 @@ export const ForecastingAnalyticsTab = ({
         summary="Heatmap, model compare, performance"
         badge={<BarChart3 className="h-4 w-4 text-cyan-200" />}
       >
-        <div className="grid gap-4 xl:h-[620px] xl:grid-cols-[minmax(0,1.18fr)_332px] xl:items-stretch">
+        <div className="grid gap-4 xl:h-[580px] xl:grid-cols-[minmax(0,1.18fr)_332px] xl:items-stretch">
           <GlassPanel
             title="Forecasted Drought Severity Map"
             rightSlot={<BarChart3 className="h-4 w-4 text-cyan-200" />}
@@ -303,9 +307,9 @@ export const ForecastingAnalyticsTab = ({
             <SpatialForecastHeatmap snapshot={snapshot} severityFilter={severityFilter} />
           </GlassPanel>
 
-          <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[220px_minmax(0,1fr)] xl:gap-4 xl:space-y-0">
+          <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[250px_minmax(0,1fr)] xl:gap-4 xl:space-y-0">
             <GlassPanel title="Compare Models" className="h-full overflow-hidden xl:flex xl:flex-col" contentClassName="h-full min-h-0 xl:flex-1 xl:p-3">
-              <div className="h-full min-h-[170px]">
+              <div className="h-full min-h-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={modelComparison} margin={{ top: 8, right: 8, left: -12, bottom: 28 }}>
                     <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import type { ChatMessage, DashboardSnapshot, Language } from "@ecovision/shared";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ConnectDataModal } from "@/components/data/ConnectDataModal";
 import { AlertsDecisionTab } from "@/components/dashboard/AlertsDecisionTab";
@@ -59,6 +59,9 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
     setTimelineIndex
   } = dashboard;
   const { isSpeaking, speak, stop } = useSpeechSynthesis();
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const previousScrollRef = useRef(0);
+  const [headerHidden, setHeaderHidden] = useState(false);
   const snapshot = dashboard.snapshot as DashboardSnapshot;
   const selectedCity = getSelectedCity(snapshot, selectedCityId);
   const criticalSignals = countCriticalSignals(snapshot, timelineIndex);
@@ -80,6 +83,34 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
       voiceHint: language === "ar" ? "ar-AE" : "en-AE"
     });
   }, [language, selectedCity.id, selectedCity.audioBriefs.ar, selectedCity.audioBriefs.en, setCurrentBrief, snapshot.audioWaveform]);
+
+  useEffect(() => {
+    const element = contentRef.current;
+
+    if (!element) {
+      return;
+    }
+
+    previousScrollRef.current = element.scrollTop;
+    setHeaderHidden(false);
+
+    const handleScroll = () => {
+      const currentScroll = element.scrollTop;
+
+      if (currentScroll < 24) {
+        setHeaderHidden(false);
+      } else if (currentScroll > previousScrollRef.current + 8) {
+        setHeaderHidden(true);
+      } else if (currentScroll < previousScrollRef.current - 8) {
+        setHeaderHidden(false);
+      }
+
+      previousScrollRef.current = currentScroll;
+    };
+
+    element.addEventListener("scroll", handleScroll, { passive: true });
+    return () => element.removeEventListener("scroll", handleScroll);
+  }, [activeTab]);
 
   const requestBriefing = async (briefLanguage: Language) => {
     const response = await audioMutation.mutateAsync({
@@ -144,18 +175,25 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
 
   return (
     <div className="min-h-screen bg-[#07111f] text-white lg:flex lg:h-screen lg:flex-col lg:overflow-hidden">
-      <Header
-        mode={snapshot.mode}
-        healthReady={!isHealthLoading && Boolean(dashboard.health)}
-        criticalSignals={criticalSignals}
-        onOpenConnect={() => setConnectModalOpen(true)}
-        onSwitchDemo={handleUseDemo}
-        onSwitchLive={() => {
-          if (!activateLiveMode()) {
-            setConnectModalOpen(true);
-          }
-        }}
-      />
+      <div
+        className={cn(
+          "sticky top-0 z-30 overflow-hidden transition-[max-height,opacity,transform] duration-300",
+          headerHidden ? "max-h-0 -translate-y-3 opacity-0" : "max-h-40 translate-y-0 opacity-100"
+        )}
+      >
+        <Header
+          mode={snapshot.mode}
+          healthReady={!isHealthLoading && Boolean(dashboard.health)}
+          criticalSignals={criticalSignals}
+          onOpenConnect={() => setConnectModalOpen(true)}
+          onSwitchDemo={handleUseDemo}
+          onSwitchLive={() => {
+            if (!activateLiveMode()) {
+              setConnectModalOpen(true);
+            }
+          }}
+        />
+      </div>
 
       <main className="mx-auto max-w-[1600px] space-y-2.5 px-4 py-3 lg:flex lg:min-h-0 lg:w-full lg:flex-1 lg:flex-col lg:overflow-hidden lg:px-6">
         <GlobalFiltersBar
@@ -179,6 +217,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
         ) : null}
 
         <div
+          ref={contentRef}
           className={cn(
             "lg:min-h-0 lg:flex-1 lg:pr-1",
             activeTab === "overview" ? "lg:overflow-hidden" : "lg:overflow-y-auto"

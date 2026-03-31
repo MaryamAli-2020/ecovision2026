@@ -3,6 +3,7 @@ import { Activity, DatabaseZap, ShieldAlert, Waves } from "lucide-react";
 import { cn, riskBadgeClasses } from "@/lib/utils";
 
 interface HeaderProps {
+  className?: string;
   mode: "demo" | "live";
   healthReady: boolean;
   criticalSignals: number;
@@ -12,6 +13,7 @@ interface HeaderProps {
 }
 
 export const Header = ({
+  className,
   mode,
   healthReady,
   criticalSignals,
@@ -19,7 +21,7 @@ export const Header = ({
   onSwitchDemo,
   onSwitchLive
 }: HeaderProps) => (
-  <header className="sticky top-0 z-30 border-b border-white/8 bg-slate-950/60 backdrop-blur-2xl">
+  <header className={cn("border-b border-white/8 bg-slate-950/60 backdrop-blur-2xl", className)}>
     <div className="mx-auto flex max-w-[1600px] flex-col gap-2.5 px-4 py-3 lg:flex-row lg:items-center lg:justify-between lg:px-6">
       <div className="flex min-w-0 items-center gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 shadow-glow">
