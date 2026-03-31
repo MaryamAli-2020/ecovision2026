@@ -152,6 +152,15 @@ body {
     background: var(--ev-modal-bg) !important;
     box-shadow: 0 24px 90px rgba(2, 6, 23, 0.22) !important;
   }
+
+  .ev-carousel-indicator-active {
+    background: #67e8f9;
+    box-shadow: 0 0 12px rgba(34, 211, 238, 0.24);
+  }
+
+  .ev-carousel-indicator-inactive {
+    background: rgba(255, 255, 255, 0.22);
+  }
 }
 
 html[data-theme="light"] .text-white,
@@ -300,6 +309,15 @@ html[data-theme="light"] .shadow-glow {
 
 html[data-theme="light"] .shadow-ember {
   box-shadow: 0 0 0 1px rgba(251, 146, 60, 0.18), 0 18px 48px rgba(251, 146, 60, 0.08) !important;
+}
+
+html[data-theme="light"] .ev-carousel-indicator-active {
+  background: #4cc7df;
+  box-shadow: 0 0 12px rgba(76, 199, 223, 0.18);
+}
+
+html[data-theme="light"] .ev-carousel-indicator-inactive {
+  background: rgba(100, 116, 139, 0.45);
 }
 
 .ev-range {

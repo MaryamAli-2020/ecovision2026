@@ -95,8 +95,10 @@ export const EmirateCarousel = <T extends EmirateCarouselItem>({
             type="button"
             onClick={() => goTo(index)}
             className={cn(
-              "h-2.5 rounded-full transition",
-              item.id === items[activeIndex]?.id ? "w-7 bg-cyan-300" : "w-2.5 bg-white/20 hover:bg-white/35"
+              "transition",
+              item.id === items[activeIndex]?.id
+                ? "ev-carousel-indicator-active h-2.5 w-7 rounded-full"
+                : "ev-carousel-indicator-inactive h-2.5 w-2.5 rounded-full"
             )}
             aria-label={`Go to ${item.emirate}`}
           />
