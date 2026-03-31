@@ -1,13 +1,15 @@
-import { Activity, DatabaseZap, ShieldAlert } from "lucide-react";
+import { Activity, DatabaseZap, MoonStar, ShieldAlert, SunMedium } from "lucide-react";
 
 import { cn, riskBadgeClasses } from "@/lib/utils";
 
 interface HeaderProps {
   className?: string;
   mode: "demo" | "live";
+  theme: "dark" | "light";
   healthReady: boolean;
   criticalSignals: number;
   onOpenConnect: () => void;
+  onToggleTheme: () => void;
   onSwitchDemo: () => void;
   onSwitchLive: () => void;
 }
@@ -15,13 +17,15 @@ interface HeaderProps {
 export const Header = ({
   className,
   mode,
+  theme,
   healthReady,
   criticalSignals,
   onOpenConnect,
+  onToggleTheme,
   onSwitchDemo,
   onSwitchLive
 }: HeaderProps) => (
-  <header className={cn("border-b border-white/8 bg-slate-950/60 backdrop-blur-2xl", className)}>
+  <header className={cn("ev-header-shell border-b border-white/8 bg-slate-950/60 backdrop-blur-2xl", className)}>
     <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-2 px-4 py-2 lg:px-6">
       <div className="flex min-w-0 items-center gap-2">
         <p className="truncate font-display text-lg text-white lg:text-[1.15rem]">EcoVision UAE 2026</p>
@@ -46,7 +50,14 @@ export const Header = ({
           <Activity className={cn("h-3.5 w-3.5", healthReady ? "text-emerald-300" : "text-amber-300")} />
           {healthReady ? "Backend ready" : "Checking"}
         </div>
-        <div className="flex items-center rounded-2xl border border-white/10 bg-white/5 p-1">
+        <button
+          className="ev-control inline-flex items-center gap-1.5 rounded-2xl border border-white/10 bg-white/5 px-2.5 py-1.5 text-[11px] font-semibold transition"
+          onClick={onToggleTheme}
+        >
+          {theme === "dark" ? <SunMedium className="h-3.5 w-3.5 text-amber-300" /> : <MoonStar className="h-3.5 w-3.5 text-sky-500" />}
+          {theme === "dark" ? "Light mode" : "Dark mode"}
+        </button>
+        <div className="ev-control flex items-center rounded-2xl border border-white/10 bg-white/5 p-1">
           <button
             className={cn(
               "rounded-xl px-2.5 py-1.5 text-[11px] font-semibold transition",

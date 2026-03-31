@@ -33,7 +33,7 @@ const MappingEditor = ({
         <select
           value={mapping[field] ?? ""}
           onChange={(event) => onChange(field, event.target.value)}
-          className="w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none"
+          className="ev-input w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none"
         >
           <option value="">Unmapped</option>
           {fields.map((candidate) => (
@@ -166,8 +166,8 @@ export const ConnectDataModal = ({ open, onClose, onUseDemo, onUseSnapshot }: Co
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4 py-6 backdrop-blur-md">
-      <div className="max-h-[92vh] w-full max-w-6xl overflow-hidden rounded-[32px] border border-white/10 bg-[#081120] shadow-[0_24px_90px_rgba(2,6,23,0.72)]">
+    <div className="ev-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4 py-6 backdrop-blur-md">
+      <div className="ev-modal-shell max-h-[92vh] w-full max-w-6xl overflow-hidden rounded-[32px] border border-white/10 bg-[#081120] shadow-[0_24px_90px_rgba(2,6,23,0.72)]">
         <div className="flex items-start justify-between gap-4 border-b border-white/8 px-6 py-5">
           <div>
             <p className="font-display text-2xl text-white">Connect Climate Data</p>
@@ -176,7 +176,7 @@ export const ConnectDataModal = ({ open, onClose, onUseDemo, onUseSnapshot }: Co
             </p>
           </div>
           <button
-            className="rounded-2xl border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:text-white"
+            className="ev-control rounded-2xl border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:text-white"
             onClick={onClose}
           >
             <X className="h-5 w-5" />
@@ -345,7 +345,7 @@ export const ConnectDataModal = ({ open, onClose, onUseDemo, onUseSnapshot }: Co
                     <input
                       value={mongoUri}
                       onChange={(event) => setMongoUri(event.target.value)}
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none"
+                      className="ev-input w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none"
                       placeholder="mongodb+srv://..."
                     />
                   </label>
@@ -354,7 +354,7 @@ export const ConnectDataModal = ({ open, onClose, onUseDemo, onUseSnapshot }: Co
                     <input
                       value={mongoDatabase}
                       onChange={(event) => setMongoDatabase(event.target.value)}
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none"
+                      className="ev-input w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none"
                       placeholder="ecovision"
                     />
                   </label>
@@ -372,7 +372,7 @@ export const ConnectDataModal = ({ open, onClose, onUseDemo, onUseSnapshot }: Co
                     <select
                       value={mongoCollection}
                       onChange={(event) => setMongoCollection(event.target.value)}
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none"
+                      className="ev-input w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none"
                     >
                       <option value="">Select collection</option>
                       {collections.map((collection) => (

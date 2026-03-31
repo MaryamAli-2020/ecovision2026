@@ -20,12 +20,12 @@ export const GlassPanel = ({
 }: GlassPanelProps) => (
   <section
     className={cn(
-      "rounded-[24px] border border-white/10 bg-slate-950/60 shadow-glow backdrop-blur-xl",
+      "ev-panel rounded-[24px] border border-white/10 bg-slate-950/60 shadow-glow backdrop-blur-xl",
       className
     )}
   >
     {(title || subtitle || rightSlot) && (
-      <div className="flex items-start justify-between gap-4 border-b border-white/6 px-4 py-3">
+      <div className="ev-panel-header flex items-start justify-between gap-4 border-b border-white/6 px-4 py-3">
         <div>
           {title ? <h3 className="font-display text-base text-slate-50">{title}</h3> : null}
           {subtitle ? <p className="mt-1 text-xs text-slate-400">{subtitle}</p> : null}

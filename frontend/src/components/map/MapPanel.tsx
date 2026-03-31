@@ -14,6 +14,7 @@ import { cn, formatMonth } from "@/lib/utils";
 
 interface MapPanelProps {
   snapshot: DashboardSnapshot;
+  theme: "dark" | "light";
   activeMetric: ClimateMetric;
   selectedCityId: string;
   timelineIndex: number;
@@ -30,6 +31,11 @@ const createBaseStyle = (): maplibregl.StyleSpecification => ({
     darkRaster: {
       type: "raster",
       tiles: ["https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"],
+      tileSize: 256
+    },
+    lightRaster: {
+      type: "raster",
+      tiles: ["https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"],
       tileSize: 256
     },
     satelliteRaster: {
@@ -54,6 +60,14 @@ const createBaseStyle = (): maplibregl.StyleSpecification => ({
       source: "darkRaster",
       paint: {
         "raster-opacity": 1
+      }
+    },
+    {
+      id: "light-raster",
+      type: "raster",
+      source: "lightRaster",
+      paint: {
+        "raster-opacity": 0
       }
     },
     {
@@ -161,6 +175,7 @@ const colorExpressionForMetric = (metric: ClimateMetric) => {
 
 export const MapPanel = ({
   snapshot,
+  theme,
   activeMetric,
   selectedCityId,
   timelineIndex,
@@ -356,17 +371,19 @@ export const MapPanel = ({
 
     map.setPaintProperty("risk-zones", "circle-color", colorExpressionForMetric(activeMetric));
     map.setPaintProperty("city-markers", "circle-color", colorExpressionForMetric(activeMetric));
-    map.setPaintProperty("dark-raster", "raster-opacity", activeMetric === "satellite" ? 0 : 1);
+    const isSatellite = activeMetric === "satellite";
+    map.setPaintProperty("dark-raster", "raster-opacity", isSatellite || theme === "light" ? 0 : 1);
+    map.setPaintProperty("light-raster", "raster-opacity", isSatellite || theme === "dark" ? 0 : 1);
     map.setPaintProperty("satellite-raster", "raster-opacity", activeMetric === "satellite" ? 1 : 0);
     map.setFilter("city-selected", ["==", ["get", "id"], selectedCityId]);
-  }, [activeMetric, features, selectedCityId]);
+  }, [activeMetric, features, selectedCityId, theme]);
 
   useEffect(() => {
     mapRef.current?.resize();
   }, [snapshot, timelineIndex, severityFilter]);
 
   return (
-    <section className="relative self-start overflow-hidden rounded-[30px] border border-white/10 bg-slate-950/55 shadow-glow backdrop-blur-xl xl:h-full xl:min-h-0">
+    <section className="ev-panel relative self-start overflow-hidden rounded-[30px] border border-white/10 bg-slate-950/55 shadow-glow backdrop-blur-xl xl:h-full xl:min-h-0">
       <div className="absolute inset-0 bg-dashboard-radial opacity-70" />
       <div className="relative flex flex-col xl:h-full">
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/8 px-4 py-3.5">
@@ -386,7 +403,7 @@ export const MapPanel = ({
                     "inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-semibold transition",
                     activeMetric === metric
                       ? "bg-white text-slate-950"
-                      : "border border-white/10 bg-white/5 text-slate-200 hover:border-cyan-400/30 hover:text-white"
+                      : "ev-control border border-white/10 bg-white/5 text-slate-200 hover:border-cyan-400/30 hover:text-white"
                   )}
                   onClick={() => onMetricChange(metric as ClimateMetric)}
                 >

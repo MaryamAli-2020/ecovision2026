@@ -9,10 +9,12 @@ import type {
   Language,
   SeverityFilter
 } from "@ecovision/shared";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { PropsWithChildren } from "react";
 
 import { getSelectedCity } from "@/lib/dashboard";
+
+export type ThemeMode = "dark" | "light";
 
 interface DashboardContextValue {
   snapshot: DashboardSnapshot | null;
@@ -25,6 +27,7 @@ interface DashboardContextValue {
   selectedCityId: string;
   timelineIndex: number;
   language: Language;
+  theme: ThemeMode;
   isConnectModalOpen: boolean;
   messages: ChatMessage[];
   currentBrief: AudioBrief | null;
@@ -39,6 +42,8 @@ interface DashboardContextValue {
   setSelectedCity: (cityId: string) => void;
   setTimelineIndex: (index: number) => void;
   setLanguage: (language: Language) => void;
+  setTheme: (theme: ThemeMode) => void;
+  toggleTheme: () => void;
   setConnectModalOpen: (open: boolean) => void;
   loadLiveSnapshot: (snapshot: DashboardSnapshot) => void;
   restoreDemoMode: () => void;
@@ -53,6 +58,19 @@ const DashboardContext = createContext<DashboardContextValue | null>(null);
 const defaultTimelineIndex = (snapshot: DashboardSnapshot) =>
   Math.min(2, Math.max(snapshot.timeline.length - 1, 0));
 
+const getInitialTheme = (): ThemeMode => {
+  if (typeof window === "undefined") {
+    return "dark";
+  }
+
+  const storedTheme = window.localStorage.getItem("ecovision-theme");
+  if (storedTheme === "light" || storedTheme === "dark") {
+    return storedTheme;
+  }
+
+  return window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark";
+};
+
 export const DashboardProvider = ({ children }: PropsWithChildren) => {
   const [snapshot, setSnapshot] = useState<DashboardSnapshot | null>(null);
   const [demoSnapshot, setDemoSnapshot] = useState<DashboardSnapshot | null>(null);
@@ -64,11 +82,22 @@ export const DashboardProvider = ({ children }: PropsWithChildren) => {
   const [selectedCityId, setSelectedCityId] = useState("");
   const [timelineIndex, setTimelineIndexState] = useState(2);
   const [language, setLanguage] = useState<Language>("en");
+  const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
   const [isConnectModalOpen, setConnectModalOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentBrief, setCurrentBrief] = useState<AudioBrief | null>(null);
   const [lastQuestion, setLastQuestion] = useState("");
   const [health, setHealth] = useState<HealthResponse | null>(null);
+
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    window.localStorage.setItem("ecovision-theme", theme);
+  }, [theme]);
 
   const hydrateSnapshot = (nextSnapshot: DashboardSnapshot, persistAsLive = false) => {
     setSnapshot(nextSnapshot);
@@ -100,6 +129,7 @@ export const DashboardProvider = ({ children }: PropsWithChildren) => {
       selectedCityId,
       timelineIndex,
       language,
+      theme,
       isConnectModalOpen,
       messages,
       currentBrief,
@@ -119,6 +149,8 @@ export const DashboardProvider = ({ children }: PropsWithChildren) => {
       setSelectedCity: setSelectedCityId,
       setTimelineIndex: setTimelineIndexState,
       setLanguage,
+      setTheme,
+      toggleTheme: () => setTheme((current) => (current === "dark" ? "light" : "dark")),
       setConnectModalOpen,
       loadLiveSnapshot: (nextSnapshot) => hydrateSnapshot({ ...nextSnapshot, mode: "live" }, true),
       restoreDemoMode: () => {
@@ -152,6 +184,7 @@ export const DashboardProvider = ({ children }: PropsWithChildren) => {
       selectedDateRange,
       severityFilter,
       snapshot,
+      theme,
       timelineIndex
     ]
   );

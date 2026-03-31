@@ -58,7 +58,7 @@ export const EmirateCarousel = <T extends EmirateCarouselItem>({
           <button
             type="button"
             onClick={() => goTo(activeIndex - 1)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-200 transition hover:border-cyan-400/30 hover:text-white"
+            className="ev-control inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-200 transition hover:border-cyan-400/30 hover:text-white"
             aria-label="Previous emirate"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -66,7 +66,7 @@ export const EmirateCarousel = <T extends EmirateCarouselItem>({
           <button
             type="button"
             onClick={() => goTo(activeIndex + 1)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-200 transition hover:border-cyan-400/30 hover:text-white"
+            className="ev-control inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-200 transition hover:border-cyan-400/30 hover:text-white"
             aria-label="Next emirate"
           >
             <ChevronRight className="h-4 w-4" />

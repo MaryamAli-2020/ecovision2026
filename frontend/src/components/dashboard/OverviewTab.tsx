@@ -10,6 +10,7 @@ import { riskBadgeClasses } from "@/lib/utils";
 
 interface OverviewTabProps {
   snapshot: DashboardSnapshot;
+  theme: "dark" | "light";
   activeMetric: ClimateMetric;
   selectedCityId: string;
   timelineIndex: number;
@@ -41,6 +42,7 @@ const buildWeatherLabel = (lst: number | null | undefined, soilMoisture: number 
 
 export const OverviewTab = ({
   snapshot,
+  theme,
   activeMetric,
   selectedCityId,
   timelineIndex,
@@ -53,6 +55,7 @@ export const OverviewTab = ({
       <div className="grid gap-4 xl:min-h-0 xl:flex-1 xl:grid-cols-[minmax(0,1.54fr)_420px] xl:items-stretch">
         <MapPanel
           snapshot={snapshot}
+          theme={theme}
           activeMetric={activeMetric}
           selectedCityId={selectedCityId}
           timelineIndex={timelineIndex}

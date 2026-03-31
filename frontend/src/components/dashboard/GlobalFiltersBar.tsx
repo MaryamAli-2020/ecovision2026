@@ -81,7 +81,7 @@ const CompactSelect = ({
   }, []);
 
   return (
-    <div ref={containerRef} className="relative z-20 flex min-w-[165px] flex-1 items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 lg:min-w-[180px]">
+    <div ref={containerRef} className="ev-control relative z-20 flex min-w-[165px] flex-1 items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 lg:min-w-[180px]">
       <span className="shrink-0 text-slate-500">{icon}</span>
       <div className="min-w-0 flex-1">
         <span className="block text-[10px] uppercase tracking-[0.22em] text-slate-500">{label}</span>
@@ -97,7 +97,7 @@ const CompactSelect = ({
       </div>
 
       {isOpen ? (
-        <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-[18px] border border-white/10 bg-slate-950/95 p-1.5 shadow-glow backdrop-blur-xl">
+        <div className="ev-popover absolute left-0 right-0 top-full z-50 mt-2 rounded-[18px] border border-white/10 bg-slate-950/95 p-1.5 shadow-glow backdrop-blur-xl">
           <div className="space-y-1">
             {options.map((option) => {
               const isSelected = option.value === value;
@@ -148,28 +148,28 @@ export const GlobalFiltersBar = ({
 
   return (
     <section
-      className="relative z-40 rounded-[22px] border border-white/10 bg-slate-950/60 shadow-glow backdrop-blur-xl"
+      className="ev-panel relative z-40 rounded-[22px] border border-white/10 bg-slate-950/60 shadow-glow backdrop-blur-xl"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex items-center gap-3 px-3 py-2.5">
         <div className="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden">
-          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300">
+          <span className="ev-control inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300">
             <Filter className="h-4 w-4" />
           </span>
           <div className="min-w-0">
             <p className="text-[11px] uppercase tracking-[0.22em] text-slate-500">Global Filters</p>
             <div className="mt-1 flex min-w-0 flex-wrap gap-1.5">
-              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
+              <span className="ev-chip rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
                 {selectedCity?.emirate ?? "UAE"}
               </span>
-              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
+              <span className="ev-chip rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
                 {selectedRange?.label ?? selectedDateRange}
               </span>
-              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
+              <span className="ev-chip rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
                 {selectedSeverity?.label ?? severityFilter}
               </span>
-              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
+              <span className="ev-chip rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-slate-200">
                 {selectedMetric?.label ?? activeMetric}
               </span>
             </div>
@@ -180,7 +180,7 @@ export const GlobalFiltersBar = ({
           <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-[11px] text-cyan-100">
             {snapshot.analytics.model.name}
           </span>
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
+          <span className="ev-chip inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-slate-300">
             <Globe2 className="h-3.5 w-3.5 text-cyan-200" />
             {snapshot.analytics.dataSources.length} sources
           </span>
@@ -191,7 +191,7 @@ export const GlobalFiltersBar = ({
           onClick={() => setIsPinned((value) => !value)}
           aria-expanded={isExpanded}
           aria-label="Toggle filters"
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-lg font-semibold text-slate-200 transition hover:border-cyan-400/30 hover:text-white"
+          className="ev-control inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-lg font-semibold text-slate-200 transition hover:border-cyan-400/30 hover:text-white"
         >
           v
         </button>
@@ -200,7 +200,7 @@ export const GlobalFiltersBar = ({
       <div
         className={cn(
           "grid transition-all duration-300 ease-out",
-          isExpanded ? "grid-rows-[1fr] border-t border-white/6" : "grid-rows-[0fr]"
+          isExpanded ? "ev-panel-header grid-rows-[1fr] border-t border-white/6" : "grid-rows-[0fr]"
         )}
       >
         <div className={cn(isExpanded ? "overflow-visible" : "pointer-events-none overflow-hidden")}>

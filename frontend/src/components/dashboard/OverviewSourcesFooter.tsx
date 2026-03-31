@@ -14,10 +14,10 @@ export const OverviewSourcesFooter = ({ snapshot }: { snapshot: DashboardSnapsho
           isOpen ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"
         )}
       >
-        <div className="rounded-[22px] bg-slate-950/95 p-3 shadow-glow backdrop-blur-xl">
+        <div className="ev-popover rounded-[22px] bg-slate-950/95 p-3 shadow-glow backdrop-blur-xl">
           <div className="space-y-2">
             {snapshot.analytics.dataSources.map((source) => (
-              <article key={source.id} className="rounded-[18px] bg-white/5 px-3 py-2.5">
+              <article key={source.id} className="ev-soft-tile rounded-[18px] bg-white/5 px-3 py-2.5">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="font-display text-[13px] leading-5 text-white">{source.title}</p>
@@ -38,7 +38,7 @@ export const OverviewSourcesFooter = ({ snapshot }: { snapshot: DashboardSnapsho
         onClick={() => setIsOpen((value) => !value)}
         aria-expanded={isOpen}
         aria-label="Toggle source footer"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-lg font-semibold text-slate-200 shadow-glow transition hover:bg-white/10 hover:text-white"
+        className="ev-control inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-lg font-semibold text-slate-200 shadow-glow transition hover:bg-white/10 hover:text-white"
       >
         ^
       </button>

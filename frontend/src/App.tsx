@@ -33,8 +33,8 @@ const DashboardBootstrap = () => {
 
   if (!dashboard.snapshot) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#07111f] text-slate-100">
-        <div className="rounded-3xl border border-white/10 bg-white/5 px-8 py-7 shadow-glow backdrop-blur-xl">
+      <div className="ev-app-shell flex min-h-screen items-center justify-center text-slate-100">
+        <div className="ev-panel rounded-3xl border border-white/10 bg-white/5 px-8 py-7 shadow-glow backdrop-blur-xl">
           <p className="font-display text-2xl">Booting EcoVision UAE 2026</p>
           <p className="mt-2 text-sm text-slate-300">
             Loading demo intelligence, climate map layers, and AI briefing context...

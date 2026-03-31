@@ -26,7 +26,7 @@ export const ExpandablePanel = ({
   return (
     <section
       className={cn(
-        "rounded-[24px] border border-white/10 bg-slate-950/60 shadow-glow backdrop-blur-xl",
+        "ev-panel rounded-[24px] border border-white/10 bg-slate-950/60 shadow-glow backdrop-blur-xl",
         className
       )}
     >
@@ -40,7 +40,7 @@ export const ExpandablePanel = ({
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="font-display text-base text-slate-50">{title}</h3>
             {summary ? (
-              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-slate-300">
+              <span className="ev-chip rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-slate-300">
                 {summary}
               </span>
             ) : null}
@@ -63,7 +63,7 @@ export const ExpandablePanel = ({
         )}
       >
         <div className="overflow-hidden">
-          <div className={cn("border-t border-white/6 p-4", contentClassName)}>{children}</div>
+          <div className={cn("ev-panel-header border-t border-white/6 p-4", contentClassName)}>{children}</div>
         </div>
       </div>
     </section>

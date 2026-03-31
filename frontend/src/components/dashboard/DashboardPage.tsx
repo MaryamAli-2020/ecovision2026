@@ -37,6 +37,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
     selectedDateRange,
     severityFilter,
     language,
+    theme,
     selectedCityId,
     timelineIndex,
     messages,
@@ -46,6 +47,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
     setCurrentBrief,
     setLanguage,
     setLastQuestion,
+    toggleTheme,
     appendMessages,
     setConnectModalOpen,
     restoreDemoMode,
@@ -174,7 +176,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
     };
 
   return (
-    <div className="min-h-screen bg-[#07111f] text-white lg:flex lg:h-screen lg:flex-col lg:overflow-hidden">
+    <div className="ev-app-shell min-h-screen text-white lg:flex lg:h-screen lg:flex-col lg:overflow-hidden">
       <div
         className={cn(
           "sticky top-0 z-30 overflow-hidden transition-[max-height,opacity,transform] duration-300",
@@ -183,9 +185,11 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
       >
         <Header
           mode={snapshot.mode}
+          theme={theme}
           healthReady={!isHealthLoading && Boolean(dashboard.health)}
           criticalSignals={criticalSignals}
           onOpenConnect={() => setConnectModalOpen(true)}
+          onToggleTheme={toggleTheme}
           onSwitchDemo={handleUseDemo}
           onSwitchLive={() => {
             if (!activateLiveMode()) {
@@ -226,6 +230,7 @@ export const DashboardPage = ({ isHealthLoading }: DashboardPageProps) => {
           {activeTab === "overview" ? (
             <OverviewTab
               snapshot={snapshot}
+              theme={theme}
               activeMetric={activeMetric}
               selectedCityId={selectedCityId}
               timelineIndex={timelineIndex}

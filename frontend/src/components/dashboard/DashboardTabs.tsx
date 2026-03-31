@@ -44,14 +44,14 @@ export const DashboardTabs = ({ activeTab, onChange }: DashboardTabsProps) => (
             "rounded-[22px] border p-3 text-left transition",
             activeTab === tab.id
               ? "border-cyan-400/30 bg-cyan-400/10 shadow-glow"
-              : "border-white/8 bg-white/5 hover:border-white/15"
+              : "ev-control border-white/8 bg-white/5 hover:border-white/15"
           )}
         >
           <div className="flex items-center gap-3">
             <div
               className={cn(
                 "rounded-2xl p-2",
-                activeTab === tab.id ? "bg-white text-slate-950" : "bg-white/5 text-cyan-100"
+                activeTab === tab.id ? "bg-white text-slate-950" : "ev-control bg-white/5 text-cyan-100"
               )}
             >
               <Icon className="h-4 w-4" />
