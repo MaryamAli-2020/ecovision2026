@@ -1,13 +1,19 @@
 import { Router } from "express";
 import { z } from "zod";
+import { AVAILABLE_METRICS } from "@ecovision/shared";
 
 import { asyncHandler } from "../lib/asyncHandler.js";
 import { generateBriefing, generateChatResponse } from "../services/chatService.js";
 import { createPdfReport } from "../services/reportService.js";
 
+const sourceTypeSchema = z.enum(["demo", "upload", "mongo", "gee"]);
+const climateMetricSchema = z.enum(
+  AVAILABLE_METRICS as [typeof AVAILABLE_METRICS[number], ...typeof AVAILABLE_METRICS[number][]]
+);
+
 const dashboardSnapshotSchema = z.object({
   mode: z.enum(["demo", "live"]),
-  sourceType: z.enum(["demo", "upload", "mongo"]),
+  sourceType: sourceTypeSchema,
   datasetLabel: z.string(),
   sourceLabel: z.string(),
   generatedAt: z.string(),
@@ -15,7 +21,7 @@ const dashboardSnapshotSchema = z.object({
   selectedCityId: z.string(),
   timeline: z.array(z.string()),
   cities: z.array(z.any()),
-  availableMetrics: z.array(z.enum(["drought", "heat", "ndvi", "satellite"])),
+  availableMetrics: z.array(climateMetricSchema),
   sampleQuestions: z.record(z.array(z.string())),
   seedMessages: z.array(z.any()),
   audioWaveform: z.array(z.number()),
@@ -26,7 +32,7 @@ const dashboardSnapshotSchema = z.object({
 const chatSchema = z.object({
   question: z.string().min(1),
   language: z.enum(["en", "ar"]),
-  metric: z.enum(["drought", "heat", "ndvi", "satellite"]),
+  metric: climateMetricSchema,
   selectedCityId: z.string().min(1),
   timelineIndex: z.number().int().nonnegative(),
   snapshot: dashboardSnapshotSchema
@@ -34,7 +40,7 @@ const chatSchema = z.object({
 
 const audioSchema = z.object({
   language: z.enum(["en", "ar"]),
-  metric: z.enum(["drought", "heat", "ndvi", "satellite"]),
+  metric: climateMetricSchema,
   selectedCityId: z.string().min(1),
   timelineIndex: z.number().int().nonnegative(),
   snapshot: dashboardSnapshotSchema
