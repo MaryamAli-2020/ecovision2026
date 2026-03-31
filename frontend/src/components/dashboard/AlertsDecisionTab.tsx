@@ -27,7 +27,7 @@ export const AlertsDecisionTab = ({
   ).length;
 
   return (
-    <div className="grid gap-4 xl:h-full xl:min-h-0 xl:grid-cols-[minmax(0,1.08fr)_360px]">
+    <div className="grid gap-4 xl:h-full xl:min-h-0 xl:grid-cols-[minmax(0,1.02fr)_400px] 2xl:grid-cols-[minmax(0,1fr)_430px]">
       <DecisionAlertsPanel snapshot={snapshot} timelineIndex={timelineIndex} severityFilter={severityFilter} />
 
       <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[minmax(0,1fr)_auto] xl:overflow-hidden xl:pr-1">

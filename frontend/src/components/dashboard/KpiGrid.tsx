@@ -37,7 +37,7 @@ export const KpiGrid = ({ snapshot, selectedCityId, timelineIndex }: KpiGridProp
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{card.title}</p>
-                <p className="mt-2.5 font-display text-[1.7rem] leading-none text-white">
+                <p className={cn("font-display text-[1.7rem] leading-none text-white", index === 0 ? "mt-5" : "mt-4")}>
                   {formatNumber(card.value, card.unit === "%" ? 0 : card.unit === "" ? 2 : 1)}
                   <span className="ml-1 text-sm font-medium text-slate-300">{card.unit}</span>
                 </p>
@@ -46,7 +46,6 @@ export const KpiGrid = ({ snapshot, selectedCityId, timelineIndex }: KpiGridProp
                 {Icon ? <Icon className="h-4 w-4 text-white" /> : null}
               </div>
             </div>
-            <p className="mt-2.5 line-clamp-2 text-xs leading-5 text-slate-300">{card.note}</p>
           </div>
         );
       })}
