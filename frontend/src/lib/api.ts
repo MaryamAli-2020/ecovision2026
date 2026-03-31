@@ -2,6 +2,8 @@ import type {
   AudioBriefRequest,
   ChatRequest,
   ChatResponse,
+  ClimateMetric,
+  DashboardSnapshot,
   HealthResponse,
   MongoCollectionsRequest,
   MongoCollectionsResponse,
@@ -11,6 +13,16 @@ import type {
 } from "@ecovision/shared";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
+const LEGACY_INSIGHTS_METRICS = new Set<ClimateMetric>(["drought", "heat", "ndvi", "satellite"]);
+
+const normalizeInsightsSnapshot = (snapshot: DashboardSnapshot): DashboardSnapshot => ({
+  ...snapshot,
+  sourceType: snapshot.sourceType === "gee" ? "upload" : snapshot.sourceType,
+  availableMetrics: snapshot.availableMetrics.filter((metric) => LEGACY_INSIGHTS_METRICS.has(metric))
+});
+
+const normalizeInsightsMetric = (metric: ClimateMetric): ClimateMetric =>
+  LEGACY_INSIGHTS_METRICS.has(metric) ? metric : "drought";
 
 const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
   const response = await fetch(`${API_BASE}${path}`, {
@@ -77,7 +89,11 @@ export const sendChatMessage = (payload: ChatRequest) =>
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify({
+      ...payload,
+      metric: normalizeInsightsMetric(payload.metric),
+      snapshot: normalizeInsightsSnapshot(payload.snapshot)
+    } satisfies ChatRequest)
   });
 
 export const generateAudioBrief = (payload: AudioBriefRequest) =>
@@ -86,7 +102,11 @@ export const generateAudioBrief = (payload: AudioBriefRequest) =>
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify({
+      ...payload,
+      metric: normalizeInsightsMetric(payload.metric),
+      snapshot: normalizeInsightsSnapshot(payload.snapshot)
+    } satisfies AudioBriefRequest)
   });
 
 const parseFilename = (contentDisposition: string | null) => {
@@ -116,7 +136,10 @@ export const downloadPdfReport = async (payload: ReportRequest) => {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify({
+      ...payload,
+      snapshot: normalizeInsightsSnapshot(payload.snapshot)
+    } satisfies ReportRequest)
   });
 
   if (!response.ok) {
