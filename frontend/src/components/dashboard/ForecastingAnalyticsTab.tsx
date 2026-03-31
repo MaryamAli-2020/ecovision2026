@@ -86,17 +86,17 @@ const SpatialForecastHeatmap = ({
   });
 
   const layout = [
-    { id: "ras-al-khaimah", left: "56%", top: "7%" },
-    { id: "umm-al-quwain", left: "47%", top: "24%" },
-    { id: "ajman", left: "39%", top: "31%" },
-    { id: "sharjah", left: "49%", top: "38%" },
-    { id: "dubai", left: "31%", top: "46%" },
-    { id: "abu-dhabi", left: "10%", top: "62%" },
-    { id: "fujairah", left: "67%", top: "48%" }
+    { id: "ras-al-khaimah", left: "56%", top: "10%" },
+    { id: "umm-al-quwain", left: "47%", top: "26%" },
+    { id: "ajman", left: "39%", top: "35%" },
+    { id: "sharjah", left: "49%", top: "42%" },
+    { id: "dubai", left: "31%", top: "50%" },
+    { id: "abu-dhabi", left: "10%", top: "68%" },
+    { id: "fujairah", left: "67%", top: "55%" }
   ];
 
   return (
-    <div className="relative min-h-[520px] overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(2,6,23,0.85))]">
+    <div className="relative min-h-[520px] overflow-hidden rounded-[22px] border border-white/8 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(2,6,23,0.85))] xl:h-full xl:min-h-0">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:48px_48px]" />
       {layout.map((position) => {
         const cell = visibleCells.find((entry) => entry.emirateId === position.id);
@@ -293,22 +293,23 @@ export const ForecastingAnalyticsTab = ({
         summary="Heatmap, model compare, performance"
         badge={<BarChart3 className="h-4 w-4 text-cyan-200" />}
       >
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.18fr)_320px] xl:items-stretch">
+        <div className="grid gap-4 xl:h-[620px] xl:grid-cols-[minmax(0,1.18fr)_332px] xl:items-stretch">
           <GlassPanel
             title="Forecasted Drought Severity Map"
             rightSlot={<BarChart3 className="h-4 w-4 text-cyan-200" />}
-            className="xl:h-full"
+            className="xl:flex xl:h-full xl:flex-col"
+            contentClassName="xl:flex-1 xl:min-h-0"
           >
             <SpatialForecastHeatmap snapshot={snapshot} severityFilter={severityFilter} />
           </GlassPanel>
 
-          <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[160px_minmax(0,1fr)] xl:gap-4 xl:space-y-0">
-            <GlassPanel title="Compare Models" className="h-full overflow-hidden" contentClassName="h-full min-h-0 p-2.5">
-              <div className="h-full min-h-0">
+          <div className="space-y-4 xl:grid xl:h-full xl:min-h-0 xl:grid-rows-[220px_minmax(0,1fr)] xl:gap-4 xl:space-y-0">
+            <GlassPanel title="Compare Models" className="h-full overflow-hidden xl:flex xl:flex-col" contentClassName="h-full min-h-0 xl:flex-1 xl:p-3">
+              <div className="h-full min-h-[170px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={modelComparison} margin={{ top: 4, right: 6, left: -18, bottom: 20 }}>
+                  <BarChart data={modelComparison} margin={{ top: 8, right: 8, left: -12, bottom: 28 }}>
                     <CartesianGrid stroke="rgba(148,163,184,0.12)" vertical={false} />
-                    <XAxis dataKey="model" height={28} tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
+                    <XAxis dataKey="model" height={34} tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
                     <YAxis tick={{ fill: "#94a3b8", fontSize: 11 }} tickLine={false} axisLine={false} />
                     <Tooltip
                       contentStyle={{
@@ -328,7 +329,7 @@ export const ForecastingAnalyticsTab = ({
               </div>
             </GlassPanel>
 
-            <GlassPanel title="Regional Performance" className="h-full min-h-0 overflow-hidden" contentClassName="h-full min-h-0 p-3.5">
+            <GlassPanel title="Regional Performance" className="h-full min-h-0 overflow-hidden xl:flex xl:flex-col" contentClassName="h-full min-h-0 xl:flex-1 xl:p-3.5">
               <div className="space-y-2.5 xl:h-full xl:overflow-y-auto xl:pr-1">
                 {regionalPerformance.map((entry) => (
                   <div key={entry.emirateId} className="rounded-[20px] border border-white/8 bg-white/5 p-3.5">

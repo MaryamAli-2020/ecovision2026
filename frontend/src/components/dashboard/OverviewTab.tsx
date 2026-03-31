@@ -50,7 +50,7 @@ export const OverviewTab = ({
   onTimelineChange
 }: OverviewTabProps) => (
     <div className="relative flex h-full min-h-0 flex-col gap-4">
-      <div className="grid gap-4 xl:min-h-0 xl:flex-1 xl:grid-cols-[minmax(0,1.58fr)_390px] xl:items-stretch">
+      <div className="grid gap-4 xl:min-h-0 xl:flex-1 xl:grid-cols-[minmax(0,1.54fr)_420px] xl:items-stretch">
         <MapPanel
           snapshot={snapshot}
           activeMetric={activeMetric}

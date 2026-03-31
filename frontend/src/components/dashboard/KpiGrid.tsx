@@ -18,7 +18,7 @@ export const KpiGrid = ({ snapshot, selectedCityId, timelineIndex }: KpiGridProp
   const delta = (point.spi ?? 0) - (previous.spi ?? 0);
 
   return (
-    <div className="mx-auto grid w-full max-w-[332px] auto-rows-fr gap-2 sm:grid-cols-2">
+    <div className="grid w-full auto-rows-fr grid-cols-2 gap-2.5">
       {cards.map((card, index) => {
         const Icon =
           index === 0 ? delta > 0 ? ArrowUpRight : delta < 0 ? ArrowDownRight : Minus : card.accent === "amber" ? ArrowUpRight : ArrowDownRight;
@@ -35,7 +35,7 @@ export const KpiGrid = ({ snapshot, selectedCityId, timelineIndex }: KpiGridProp
           <div
             key={card.title}
             className={cn(
-              "flex min-h-[92px] flex-col justify-between rounded-[22px] border px-3 py-2 shadow-glow",
+              "flex min-h-[86px] flex-col justify-between rounded-[22px] border px-3.5 py-2 shadow-glow",
               card.accent === "rose" && "border-rose-400/20 bg-rose-500/8",
               card.accent === "amber" && "border-amber-400/20 bg-amber-500/8 shadow-ember",
               card.accent === "teal" && "border-teal-400/20 bg-teal-500/8",
@@ -44,8 +44,8 @@ export const KpiGrid = ({ snapshot, selectedCityId, timelineIndex }: KpiGridProp
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="min-h-[1.45rem] text-[10px] uppercase tracking-[0.16em] text-slate-400">{displayTitle}</p>
-                  <p className={cn("font-display text-[1.2rem] leading-none text-white", index === 0 ? "mt-3" : "mt-2")}>
+                  <p className="min-h-[1.25rem] text-[10px] uppercase tracking-[0.16em] text-slate-400">{displayTitle}</p>
+                  <p className={cn("font-display text-[1.16rem] leading-none text-white", index === 0 ? "mt-2.5" : "mt-1.5")}>
                     {formatNumber(card.value, card.unit === "%" ? 0 : card.unit === "" ? 2 : 1)}
                     <span className="ml-1 text-[0.88rem] font-medium text-slate-300">{card.unit}</span>
                   </p>
